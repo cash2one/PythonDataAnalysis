@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
 __author__ = 'Zealot'
 
 
@@ -13,7 +15,7 @@ def main():
     print s
     x = '{}, {}!'.format(imperative, expletive)
     print x
-    name = "eminem"
+    name = "eminem阿姆"
     n = 1
     s2 = 'name: %s; score: %d' % (name, n)
     print s2
