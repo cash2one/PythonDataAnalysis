@@ -33,5 +33,22 @@ def main():
     print str1 * 2  # 输出字符串两次
     print str1 + "TEST"  # 输出连接的字符串
 
+    err_html = '''
+    <HTML><HEAD><TITLE>
+    Friends CGI Demo</TITLE></HEAD>
+    <BODY><H3>ERROR</H3>
+    <B>%s</B><P>
+    <FORM><INPUT TYPE=button VALUE=Back
+    ONCLICK="window.history.back()"></FORM>
+    </BODY></HTML>
+    '''
+    print err_html
+
+    str3 = "http://www.w3cschool.cc/"
+    print str3.partition("://")
+    str2 = "123_test"
+    print str2.partition("_")
+    ss = str2.split("_")
+    print ss[0], ss[1]
 if __name__ == '__main__':
     main()
