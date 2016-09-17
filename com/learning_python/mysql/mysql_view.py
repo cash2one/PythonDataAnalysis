@@ -17,8 +17,7 @@ db = MySQLdb.connect("localhost", "testuser", "test123", "TESTDB")
 cursor = db.cursor()
 
 # SQL 查询语句
-sql = "SELECT * FROM EMPLOYEE \
-       WHERE INCOME > '%d'" % (1000)
+sql = "SELECT * FROM EMPLOYEE WHERE INCOME > '%d'" % (1000)
 try:
     # 执行SQL语句
     cursor.execute(sql)
