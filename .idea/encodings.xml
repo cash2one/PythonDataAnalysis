@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding" useUTFGuessing="true" native2AsciiForPropertiesFiles="false">
-    <file url="file://$PROJECT_DIR$/com/learning_python/learning_json/hello_json.py" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/com/learning_python/json/hello_json.py" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/com/learning_python/learning_object.py" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/com/ml" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/com/sql" charset="UTF-8" />
