@@ -50,5 +50,8 @@ def main():
     print str2.partition("_")
     ss = str2.split("_")
     print ss[0], ss[1]
+    print str3.count("c")
+    print 123, 456,
+    print 789
 if __name__ == '__main__':
     main()
