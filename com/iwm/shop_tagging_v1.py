@@ -1,7 +1,12 @@
 __author__ = 'Zealot'
 import sys
 
-
+"""
+命令：
+输入为beijing_wids，使用sys.stdin导入程序当中，
+结果打印出来，保存到temp文件当中
+cat beijing_wids  | python shop_tagging_v1.py > temp
+"""
 reload(sys)
 sys.setdefaultencoding("utf-8")
 
