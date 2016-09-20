@@ -11,9 +11,12 @@ sys.setdefaultencoding('utf-8')
 """
 
 # 商户、经营范围映射
-range_shop_name_mapping_path = "/Users/Zealot/Desktop/waimai/shop_range_mapping"
-#北京商户id，菜品名称
+range_shop_name_mapping_path = "/Users/Zealot/Desktop/waimai/shop_range_mapping_110"
+# range_shop_name_mapping_path = "/Users/Zealot/Desktop/waimai/shop_range_mapping_17"
+#所有商户id，菜品名称
 shop_dishes_info_path = "/Users/Zealot/Desktop/waimai/widDishTag.log"
+
+output = "/Users/Zealot/Desktop/waimai/shop_id_range_rate.txt"
 
 #所有的经营范围
 
@@ -21,9 +24,13 @@ delimiter_blank = "\t"
 
 
 def get_all_range():
+    """
+    获取所有的经营范围
+    :return:
+    """
     all_range = []
     for line in open(range_shop_name_mapping_path):
-        shop_range = line.split("\t")[0]
+        shop_range = line.strip().split("\t")[0]
         all_range.append(shop_range)
     return set(all_range)
 
@@ -55,10 +62,27 @@ def get_shop_id_name_dishes(file_path="shop_dishes_info.log"):
     return shop_id_products
 
 
-def main():
-    all_range = get_all_range()
-    shop_id_products = get_shop_id_name_dishes(shop_dishes_info_path)
-    fo = open("shop_id_range_rate3.txt", "w")
+def get_all_dishes(file_path="shop_dishes_info.log"):
+    """
+    获取所有菜品
+    :return:
+    """
+    fo = open("/Users/Zealot/Desktop/waimai/all_dishes.txt", "w")
+    for line in open(file_path):
+        shop_id = line.split(delimiter_blank)[0]
+        shop_postfix = line.split(delimiter_blank)[1]
+        products = []
+
+        decodeb = json.loads(shop_postfix)
+        for categoryId_name in decodeb:
+            for product_id_name in decodeb[categoryId_name]:
+                p_name = product_id_name.split("_")[1]
+                fo.write(p_name+"\n")
+    fo.close()
+
+
+def get_range_by_dish_name(all_range, shop_id_products):
+    fo = open(output, "w")
     for shop_id_product_set in shop_id_products:
         shop_id = shop_id_product_set[0]
         shop_product_set = shop_id_product_set[1]
@@ -67,11 +91,15 @@ def main():
             continue
         product_set_str = "\t".join(shop_product_set)
         res_list = []
+        flag = False
         for shop_range in all_range:
             # print shop_range
             product_count = product_set_str.count(shop_range)
+            if product_count > 0:
+                flag = True
             res_list.append((shop_range, float(product_count) / product_all_count))
-
+        if not flag:#如果商户范围没有大于0的商户
+            continue
         res = [shop_id]
         # print shop_id+"\t",
         for range_rate in res_list:
@@ -79,6 +107,33 @@ def main():
             res.append(range_r)
             # print range_rate[0] + "_" + str(range_rate[1]) + "\t",
         fo.write("\t".join(res)+"\n")
+
+
+def get_wid_dishes(shop_id_products):
+    """
+    获取商户id,和菜品
+    :param shop_id_products:
+    :return:
+    """
+    fo = open("/Users/Zealot/Desktop/waimai/all_shop_id_dishes.txt", "w")
+    for shop_id_product_set in shop_id_products:
+        shop_id = shop_id_product_set[0]
+        shop_product_set = shop_id_product_set[1]
+        product_all_count = len(shop_product_set)
+        if product_all_count == 0:
+            continue
+        product_set_str = "\t".join(shop_product_set)
+        fo.write(shop_id + "\t" + product_set_str+"\n")
+
+
+def main():
+    all_range = get_all_range()
+    # for range in all_range:
+    #     print range
+    shop_id_products = get_shop_id_name_dishes(shop_dishes_info_path)
+    get_range_by_dish_name(all_range, shop_id_products)
+    # get_all_dishes(shop_dishes_info_path)
+    # get_wid_dishes(shop_id_products)
 
 if __name__ == '__main__':
     main()
