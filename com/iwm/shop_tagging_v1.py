@@ -11,7 +11,7 @@ reload(sys)
 sys.setdefaultencoding("utf-8")
 
 range_shop_map = {}
-with open("shop_range_mapping") as f:
+with open("shop_range_mapping_17") as f:
     for line in f:
         fields = line.strip().split("\t")
         range_shop_map.setdefault(fields[1], list())

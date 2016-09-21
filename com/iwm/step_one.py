@@ -7,7 +7,7 @@ __author__ = 'Zealot'
 """
 
 # 商户、经营范围映射
-range_shop_name_mapping_path = "/Users/Zealot/Desktop/waimai/shop_range_mapping"
+range_shop_name_mapping_path = "/Users/Zealot/Desktop/waimai/shop_range_mapping_17"
 #北京商户id，名称
 shop_id_name_path = "/Users/Zealot/Desktop/waimai/beijing_wids"
 

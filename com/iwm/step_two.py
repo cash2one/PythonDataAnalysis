@@ -14,7 +14,9 @@ sys.setdefaultencoding('utf-8')
 range_shop_name_mapping_path = "/Users/Zealot/Desktop/waimai/shop_range_mapping_110"
 # range_shop_name_mapping_path = "/Users/Zealot/Desktop/waimai/shop_range_mapping_17"
 #所有商户id，菜品名称
-shop_dishes_info_path = "/Users/Zealot/Desktop/waimai/widDishTag.log"
+# shop_dishes_info_path = "/Users/Zealot/Desktop/waimai/widDishTag.log"
+#北京商户id，名称
+shop_dishes_info_path = "/Users/Zealot/Desktop/waimai/beijing_wids"
 
 output = "/Users/Zealot/Desktop/waimai/shop_id_range_rate.txt"
 
@@ -97,7 +99,7 @@ def get_range_by_dish_name(all_range, shop_id_products):
             product_count = product_set_str.count(shop_range)
             if product_count > 0:
                 flag = True
-            res_list.append((shop_range, float(product_count) / product_all_count))
+                res_list.append((shop_range, float(product_count) / product_all_count))
         if not flag:#如果商户范围没有大于0的商户
             continue
         res = [shop_id]
@@ -105,7 +107,6 @@ def get_range_by_dish_name(all_range, shop_id_products):
         for range_rate in res_list:
             range_r = range_rate[0] + "_" + str(range_rate[1])
             res.append(range_r)
-            # print range_rate[0] + "_" + str(range_rate[1]) + "\t",
         fo.write("\t".join(res)+"\n")
 
 
