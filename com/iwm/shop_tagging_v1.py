@@ -2,16 +2,19 @@ __author__ = 'Zealot'
 import sys
 
 """
+1.2
+第一步，命中逻辑
 命令：
 输入为beijing_wids，使用sys.stdin导入程序当中，
 结果打印出来，保存到temp文件当中
 cat beijing_wids  | python shop_tagging_v1.py > temp
+命中
 """
 reload(sys)
 sys.setdefaultencoding("utf-8")
 
 range_shop_map = {}
-with open("shop_range_mapping_17") as f:
+with open("shop_range_mapping_35") as f:
     for line in f:
         fields = line.strip().split("\t")
         range_shop_map.setdefault(fields[1], list())

@@ -14,11 +14,11 @@ sys.setdefaultencoding('utf-8')
 range_shop_name_mapping_path = "/Users/Zealot/Desktop/waimai/shop_range_mapping_110"
 # range_shop_name_mapping_path = "/Users/Zealot/Desktop/waimai/shop_range_mapping_17"
 #所有商户id，菜品名称
-# shop_dishes_info_path = "/Users/Zealot/Desktop/waimai/widDishTag.log"
+shop_dishes_info_path = "/Users/Zealot/Desktop/waimai/widDishTag.log"
 #北京商户id，名称
-shop_dishes_info_path = "/Users/Zealot/Desktop/waimai/beijing_wids"
+# shop_dishes_info_path = "/Users/Zealot/Desktop/waimai/beijing_wids"
 
-output = "/Users/Zealot/Desktop/waimai/shop_id_range_rate.txt"
+output = "/Users/Zealot/Desktop/waimai/shop_id_range_rate_0927_2.txt"
 
 #所有的经营范围
 
@@ -96,7 +96,14 @@ def get_range_by_dish_name(all_range, shop_id_products):
         flag = False
         for shop_range in all_range:
             # print shop_range
-            product_count = product_set_str.count(shop_range)
+
+            ################
+            product_count = 0
+            for product_info in shop_product_set:
+                if product_info.find(shop_range) != -1:
+                    product_count += 1
+            ###################
+            # product_count = product_set_str.count(shop_range)
             if product_count > 0:
                 flag = True
                 res_list.append((shop_range, float(product_count) / product_all_count))
@@ -127,11 +134,38 @@ def get_wid_dishes(shop_id_products):
         fo.write(shop_id + "\t" + product_set_str+"\n")
 
 
+def export_shop_id_dishes_file(file_path="shop_dishes_info.log"):
+    """
+    获取商户id，商户名称，菜品,导出到文件当中,用来计算第三步
+    通过商户菜品的json文件中获取
+    :return:
+    """
+    shop_id_products = []
+    fo = open("/Users/Zealot/Desktop/waimai/shop_id_dishes.txt", "w")
+    for line in open(file_path):
+        shop_id = line.split(delimiter_blank)[0]
+        shop_postfix = line.split(delimiter_blank)[1]
+        products = []
+
+        #所有的产品列表
+        products = []
+        decodeb = json.loads(shop_postfix)
+        for categoryId_name in decodeb:
+            # print categoryId_name, decodeb[categoryId_name]
+            for product_id_name in decodeb[categoryId_name]:
+                p_name = product_id_name.split("_")[1]
+                products.append(p_name)
+
+        shop_id_products.append((shop_id, products))
+        fo.write(shop_id + "\t" + "\t".join(products) + "\n")
+
+
 def main():
     all_range = get_all_range()
     # for range in all_range:
     #     print range
     shop_id_products = get_shop_id_name_dishes(shop_dishes_info_path)
+    # export_shop_id_dishes_file(shop_dishes_info_path)
     get_range_by_dish_name(all_range, shop_id_products)
     # get_all_dishes(shop_dishes_info_path)
     # get_wid_dishes(shop_id_products)
