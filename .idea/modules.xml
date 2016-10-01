@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../GBDT/.idea/GBDT.iml" filepath="$PROJECT_DIR$/../GBDT/.idea/GBDT.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/PythonDataAnalysis.iml" filepath="$PROJECT_DIR$/.idea/PythonDataAnalysis.iml" />
     </modules>
   </component>

@@ -1,5 +1,4 @@
 __author__ = 'Zealot'
-
 import numpy as np
 import urllib
 # url with dataset
@@ -11,15 +10,13 @@ dataset = np.loadtxt(raw_data, delimiter=",")
 # separate the data from the target attributes
 X = dataset[:, 0:7]
 y = dataset[:, 8]
-# print(X)
 
 from sklearn import metrics
-from sklearn.linear_model import LogisticRegression
-
-model = LogisticRegression()
+from sklearn.neighbors import KNeighborsClassifier
+# fit a k-nearest neighbor model to the data
+model = KNeighborsClassifier()
 model.fit(X, y)
-print(model.class_weight)
-print model
+print(model)
 # make predictions
 expected = y
 predicted = model.predict(X)
