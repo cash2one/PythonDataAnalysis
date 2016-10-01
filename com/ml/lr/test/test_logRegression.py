@@ -1,6 +1,6 @@
 __author__ = 'Zealot'
 
-#################################################
+# ################################################
 # logRegression: Logistic Regression
 # Author : zouxy
 # Date   : 2014-03-02
@@ -15,18 +15,20 @@ from logRegression import *
 def load_data():
     train_x = []
     train_y = []
-    fileIn = open('testSet.txt')
+    fileIn = open('../testSet.txt')
     for line in fileIn.readlines():
         lineArr = line.strip().split()
         train_x.append([1.0, float(lineArr[0]), float(lineArr[1])])
         train_y.append(float(lineArr[2]))
     return mat(train_x), mat(train_y).transpose()
 
+
 if __name__ == '__main__':
     ## step 1: load data
     print "step 1: load data..."
     train_x, train_y = load_data()
-    test_x = train_x; test_y = train_y
+    test_x = train_x;
+    test_y = train_y
 
     ## step 2: training...
     print "step 2: training..."
@@ -43,5 +45,5 @@ if __name__ == '__main__':
     ## step 4: show the result
     print "step 4: show the result..."
     print 'The classify accuracy is: %.3f%%' % (accuracy * 100)
-    print optimalWeights[0],optimalWeights[1],optimalWeights[2]
+    print optimalWeights[0], optimalWeights[1], optimalWeights[2]
     showLogRegres(optimalWeights, train_x, train_y)
