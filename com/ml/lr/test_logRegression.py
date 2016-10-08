@@ -34,11 +34,11 @@ if __name__ == '__main__':
     #stocGradDescent       [[ 2.79836526]] [[ 0.3850335]] [[-0.50730461]]
     #smoothStocGradDescent [[ 11.07202326]] [[ 0.80520534]] [[-1.57937794]]
     opts = {'alpha': 0.01, 'maxIter': 20, 'optimizeType': 'stocGradDescent'}
-    optimalWeights = trainLogRegres(train_x, train_y, opts)
+    optimalWeights = train_log_regres(train_x, train_y, opts)
 
     ## step 3: testing
     print "step 3: testing..."
-    accuracy = testLogRegres(optimalWeights, test_x, test_y)
+    accuracy = test_log_regres(optimalWeights, test_x, test_y)
 
     ## step 4: show the result
     print "step 4: show the result..."

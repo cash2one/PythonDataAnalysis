@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 __author__ = 'Zealot'
 #################################################
 # logRegression: Logistic Regression
@@ -21,51 +22,56 @@ def sigmoid(inX):
 # input: train_x is a mat datatype, each row stands for one sample
 #		 train_y is mat datatype too, each row is the corresponding label
 #		 opts is optimize option include step and maximum number of iterations
-def trainLogRegres(train_x, train_y, opts):
+def train_log_regres(train_x, train_y, opts):
     # calculate training time
-    startTime = time.time()
+    start_time = time.time()
 
-    numSamples, numFeatures = shape(train_x)
-    alpha = opts['alpha']; maxIter = opts['maxIter']
-    weights = ones((numFeatures, 1))
+    num_samples, num_features = shape(train_x)
+    alpha = opts['alpha']
+    max_iter = opts['maxIter']
+    weights = ones((num_features, 1))
 
     # optimize through gradient descent algorilthm
-    for k in range(maxIter):
+    for k in range(max_iter):
         if opts['optimizeType'] == 'gradDescent': # gradient descent algorilthm
-            output = sigmoid(train_x * weights)
-            error = train_y - output
-            weights = weights + alpha * train_x.transpose() * error
+            w_x = train_x * weights#用所有的样本更新权重（train_x为所有样本），得到y值
+            temp = mat(weights).transpose() * train_x.transpose()
+            # print len(temp)
+            # print temp.transpose()==w_x
+            output = sigmoid(w_x)#计算logit函数，归一化到0~1之间
+            error = train_y - output#y-wx
+            weights += alpha * train_x.transpose() * error#(y-wx)x
         elif opts['optimizeType'] == 'stocGradDescent': # stochastic gradient descent
-            for i in range(numSamples):
+            for i in range(num_samples):
                 output = sigmoid(train_x[i, :] * weights)
                 error = train_y[i, 0] - output
-                weights = weights + alpha * train_x[i, :].transpose() * error
+                weights += alpha * train_x[i, :].transpose() * error
         elif opts['optimizeType'] == 'smoothStocGradDescent': # smooth stochastic gradient descent
             # randomly select samples to optimize for reducing cycle fluctuations
-            dataIndex = range(numSamples)
-            for i in range(numSamples):
+            data_index = range(num_samples)
+            for i in range(num_samples):
                 alpha = 4.0 / (1.0 + k + i) + 0.01
-                randIndex = int(random.uniform(0, len(dataIndex)))
+                randIndex = int(random.uniform(0, len(data_index)))
                 output = sigmoid(train_x[randIndex, :] * weights)
                 error = train_y[randIndex, 0] - output
-                weights = weights + alpha * train_x[randIndex, :].transpose() * error
-                del(dataIndex[randIndex]) # during one interation, delete the optimized sample
+                weights += alpha * train_x[randIndex, :].transpose() * error
+                del(data_index[randIndex]) # during one interation, delete the optimized sample
         else:
             raise NameError('Not support optimize method type!')
 
-    print 'Congratulations, training complete! Took %fs!' % (time.time() - startTime)
+    print 'Congratulations, training complete! Took %fs!' % (time.time() - start_time)
     return weights
 
 
 # test your trained Logistic Regression model given test set
-def testLogRegres(weights, test_x, test_y):
-    numSamples, numFeatures = shape(test_x)
-    matchCount = 0
-    for i in xrange(numSamples):
+def test_log_regres(weights, test_x, test_y):
+    num_samples, num_features = shape(test_x)
+    match_count = 0
+    for i in xrange(num_samples):
         predict = sigmoid(test_x[i, :] * weights)[0, 0] > 0.5
         if predict == bool(test_y[i, 0]):
-            matchCount += 1
-    accuracy = float(matchCount) / numSamples
+            match_count += 1
+    accuracy = float(match_count) / num_samples
     return accuracy
 
 
