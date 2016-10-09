@@ -15,7 +15,7 @@ with open("fu_zhu_ci_biao") as f:
         all_range.append(fields[0])
         range_name = fields[0]
         for index in fields[1:]:
-            if index.strip() != "" & index != "\t":
+            if index.strip() != "" and index != "\t":
                 all_range_map[index] = range_name
 
 
