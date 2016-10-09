@@ -3,11 +3,12 @@
 __author__ = 'Zealot'
 
 """
-第一步，包含:通过商户名称，与商户、经营范围映射表，得到商户id, 商户名称, 经营范围
+1.2（命中）:通过商户名称，与商户、经营范围映射表，得到商户id, 商户名称, 经营范围
+北京地区
 """
 
 # 商户、经营范围映射
-range_shop_name_mapping_path = "/Users/Zealot/Desktop/waimai/shop_range_mapping_17"
+range_shop_name_mapping_path = "/Users/Zealot/Desktop/waimai/shop_range_mapping_59"#又多加的7个类型
 # 北京商户id，名称
 shop_id_name_path = "/Users/Zealot/Desktop/waimai/beijing_wids"
 
