@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
 __author__ = 'Zealot'
 import sys
 
@@ -14,7 +16,7 @@ reload(sys)
 sys.setdefaultencoding("utf-8")
 
 range_shop_map = {}
-with open("shop_range_mapping_35") as f:
+with open("shop_range_mapping_59") as f:
     for line in f:
         fields = line.strip().split("\t")
         range_shop_map.setdefault(fields[1], list())
