@@ -1,12 +1,15 @@
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
 __author__ = 'Zealot'
 import sys
 
 reload(sys)
 sys.setdefaultencoding("utf-8")
 #contains 1.1
-#beijing di qu
+#北京地区
 #add fu zhu ci biao
-#quchong
+#去重，通过set去重
+#cat beijing_wids  | python shop_tagging_v3.py > 1010_1.1_fuzhuci
 range_shop_map = {}
 all_range = []
 all_range_map = {}
@@ -25,7 +28,7 @@ for line in sys.stdin:
     wid = fields[0]
     name = fields[1]
 
-    res = [wid, name]
+    res = [wid]
 
     flag = False
     buf = []

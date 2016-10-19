@@ -11,6 +11,7 @@ import sys
 结果打印出来，保存到temp文件当中
 cat beijing_wids  | python shop_tagging_v1.py > temp
 命中
+去重
 """
 reload(sys)
 sys.setdefaultencoding("utf-8")
@@ -20,7 +21,7 @@ with open("shop_range_mapping_59") as f:
     for line in f:
         fields = line.strip().split("\t")
         range_shop_map.setdefault(fields[1], list())
-        range_shop_map[fields[1]].append(fields[0])
+        range_shop_map[fields[1]] = fields[0]
 
 for line in sys.stdin:
     fields = line.strip().split("\t")
@@ -28,9 +29,11 @@ for line in sys.stdin:
     name = fields[1]
 
     res = [wid, name]
-    for key, value in range_shop_map.items():
+    buf = set()
+    for key in range_shop_map.keys():
         if name.find(key) != -1:
-            res.extend(value)
+            buf.add(range_shop_map[key])
+    res.extend(buf)
     if len(res) > 2:
         print "\t".join(res)
 

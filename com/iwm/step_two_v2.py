@@ -18,7 +18,7 @@ shop_dishes_info_path = "/Users/Zealot/Desktop/waimai/widDishTag.log"
 #北京商户id，名称
 # shop_dishes_info_path = "/Users/Zealot/Desktop/waimai/beijing_wids"
 
-output = "/Users/Zealot/Desktop/waimai/1009_2.txt"
+output = "/Users/Zealot/Desktop/waimai/1010_2.txt"
 
 #所有的经营范围
 
@@ -31,16 +31,28 @@ def get_all_range():
     :return:
     """
     all_range = []
-    #{辅助词：经营范围}
-    all_range_map = {}
+    # #{辅助词：经营范围}
+    # all_range_map = {}
+    # for line in open(range_shop_name_mapping_path):
+    #     fields = line.strip().split("\t")
+    #     all_range.append(fields[0])
+    #     range_name = fields[0]
+    #     for index in fields[:]:
+    #         if index.strip() != "" and index != "\t":
+    #             all_range_map[index] = range_name
+    #{经营范围，辅助词列表}
+    all_range_fuzhuci_map = {}
     for line in open(range_shop_name_mapping_path):
         fields = line.strip().split("\t")
-        all_range.append(fields[0])
         range_name = fields[0]
+        all_range.append(range_name)
+        fuzhuci_list = []
         for index in fields[:]:
             if index.strip() != "" and index != "\t":
-                all_range_map[index] = range_name
-    return all_range_map
+                fuzhuci_list.append(index)
+        all_range_fuzhuci_map[range_name] = fuzhuci_list
+
+    return all_range_fuzhuci_map
 
 
 def get_shop_id_name_dishes(file_path="shop_dishes_info.log"):
@@ -117,6 +129,41 @@ def get_range_by_dish_name(shop_id_products, all_range_map):
         fo.write("\t".join(res)+"\n")
 
 
+def get_range_by_dish_name2(shop_id_products, all_range_fuzhuci_map):
+    fo = open(output, "w")
+    for shop_id_product_set in shop_id_products:
+        shop_id = shop_id_product_set[0]
+        shop_product_set = shop_id_product_set[1]
+        product_all_count = len(shop_product_set)
+        if product_all_count == 0:
+            continue
+        res_map = {}#{经营范围，数量}
+        flag = False
+        for cai_pin_name in shop_product_set:#商户中的菜品集中，选出一个
+            for shop_range in all_range_fuzhuci_map.keys():#遍历所有经营范围
+                fuzhuci_list = all_range_fuzhuci_map[shop_range]#获取所有的辅助词
+                for fu_zhu_ci in fuzhuci_list:#只要有一个辅助词匹配到了，则此经营范围的数量+1,并跳出循环
+                    if cai_pin_name.find(fu_zhu_ci) != -1:
+                        flag = True
+                        # print "辅助词："+fu_zhu_c
+                        # print "a:"+res_map.has_key(shop_range)i
+                        # print "a:"+res_map.has_key(shop_range)
+                        if shop_range in res_map.keys():
+                            range_count = res_map[shop_range]
+                            res_map[shop_range] = range_count + 1
+                        else:
+                            res_map[shop_range] = 1
+                        break
+
+        if not flag:#如果商户范围没有大于0的商户
+            continue
+        res = [shop_id]
+        for range_name, count in res_map.items():
+            range_r = range_name + "_" + str(float(count)/product_all_count)
+            res.append(range_r)
+        fo.write("\t".join(res)+"\n")
+
+
 def get_wid_dishes(shop_id_products):
     """
     获取商户id,和菜品
@@ -161,12 +208,13 @@ def export_shop_id_dishes_file(file_path="shop_dishes_info.log"):
 
 
 def main():
-    all_range_map = get_all_range()
-    # for range in all_range:
+    all_range_fuzhuci_map = get_all_range()
+    # for range in all_range_fuzhuci_map:
     #     print range
     shop_id_products = get_shop_id_name_dishes(shop_dishes_info_path)
+    get_range_by_dish_name2(shop_id_products, all_range_fuzhuci_map)
     # export_shop_id_dishes_file(shop_dishes_info_path)
-    get_range_by_dish_name(shop_id_products, all_range_map)
+
     # get_all_dishes(shop_dishes_info_path)
     # get_wid_dishes(shop_id_products)
 
