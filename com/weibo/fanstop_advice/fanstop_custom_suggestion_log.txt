@@ -1,0 +1,43 @@
+current cmd path:/data0/fans_economy/headline/chenwei9/fanstop_advice/script
+/data0/fans_economy/headline/chenwei9/fanstop_advice
+RUNNING START TIME: Thu Oct 20 11:30:01 CST 2016
+2016-10-20 11:30:01.435156 /data0/fans_economy/headline/chenwei9/fanstop_advice/data/order_data.txt
+order_data: 34584
+2016-10-20 11:30:48.070020  load data finsh: order_data num is  34584 history_order_data num is  116371
+34577
+2016-10-20 11:31:53.564021  inter_data finsh: inter_data num is  34577
+mid_record_dic num: 1000
+bowen order data num: 34584
+bowen result num: 100
+2016-10-20 11:32:20.789651  bowen process finish: bowen_result num is  100
+2016-10-20 11:34:25.812975  ctr caculate finish: CtrData order_data num is  33799 CtrData history_order_data num is  116792
+2016-10-20 11:34:26.728346  finish words segment
+2016-10-20 11:36:27.256855  BagProb finish: bags_recmd_result num is  33792
+loop begin
+2016-10-20 11:37:56.458059  upfans suggestion finish: upfans_result num is  100
+buy_suggestion begin: order num is  33799
+buy_suggestion end: result num is  100
+33792
+2016-10-20 11:38:58.035648  buy option finish: buy_result num is  33792
+2016-10-20 11:39:04.391577  out data finish
+2016-10-20 11:39:30.434411  finish all
+finish caculate
+16091\u6709\u4e0d\u5c11\u4f18\u5316\u7a7a\u95f4\uff0c\u8bd5\u8bd5\u6295\u7ed9\u6f5c\u5728\u7c89\u4e1d\u548c\u5174\u8da3\u7528\u6237\u5427\uff01"}, "feifenVol": 0}
+
+160914050190551}
+
+160914050\uff0c\u8bd5\u8bd5\u6295\u7ed9\u5bf9\u7f8e\u5973\u611f\u5174\u8da3\u7684\u7528\u6237\u5427\uff01"}, "feifenVol": 150}
+
+1609140501t": 0, "orientationVol": [], "suggestion": {"fentiao": "\u672c\u6b21\u63a8\u5e7f\u8fd8\u6709\u4e0d\u5c11\u4f18\u5316\u7a7a\u95f4\uff0c\u8bd5\u8bd5\u6295\u7ed9\u6f5c\u5728\u7c89\u4e1d\u548c\u5174\u8da3\u7528\u6237\u5427\uff01"}, "feifenVol": 0}
+
+160 "\u672c\u6b21\u63a8\u5e7f\u8fd8\u6709\u4e0d\u5c11\u4f18\u5316\u7a7a\u95f4\uff0c\u8bd5\u8bd5\u6295\u7ed9\u6f5c\u5728\u7c89\u4e1d\u548c\u5174\u8da3\u7528\u6237\u5427\uff01", "fansmore": "\u5bfb\u627e\u6d3b\u8dc3\u7c89\u4e1d\uff0c\u6269\u5927\u5fae\u535a\u66dd\u5149\uff0c\u8bd5\u8bd5\u6da8\u7c89\u5229\u5668\u2014\u2014\u8d26\u53f7\u5934\u6761\u5427!"}, "feifenVol": 0}
+
+160915c\u5728\u7c89\u4e1d\u548c\u5174\u8da3\u7528\u6237\u5427\uff01"}, "feifenVol": 0}
+
+\u7a7a\u95f4\uff0c\u8bd5\u8bd5\u6295\u7ed9\u6f5c\u5728\u7c89\u4e1d\u548c\u5174\u8da3\u7528\u6237\u5427\uff01", "fansmore": "\u5bfb\u627e\u6d3b\u8dc3\u7c89\u4e1d\uff0c\u6269\u5927\u5fae\u535a\u66dd\u5149\uff0c\u8bd5\u8bd5\u6da8\u7c89\u5229\u5668\u2014\u2014\u8d26\u53f7\u5934\u6761\u5427!"}, "feifenVol": 0}
+
+onVol": [], "suggestion": {"fentiao": "\u672c\u6b21\u63a8\u5e7f\u8fd8\u6709\u4e0d\u5c11\u4f18\u5316\u7a7a\u95f4\uff0c\u8bd5\u8bd5\u6295\u7ed9\u6f5c\u5728\u7c89\u4e1d\u548c\u5174\u8da3\u7528\u6237\u5427\uff01"}, "feifenVol": 0}
+
+8\u679c\u5f88\u8d5e\uff0c\u8bd5\u8bd5\u6295\u7ed9\u6f5c\u5728\u7c89\u4e1d\u548c\u5bf9\u4e8c\u6b21\u5143\u611f\u5174\u8da3\u7684\u7528\u6237\uff0c\u83b7\u53d6\u66f4\u591a\u66dd\u5149\u548c\u4e92\u52a8\u5427\uff01"}, "feifenVol": 1450}
+
+RUNNING END TIME: Thu Oct 20 11:39:52 CST 2016
