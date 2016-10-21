@@ -6,7 +6,7 @@ import MySQLdb
 import datetime
 
 
-class Upfans_Suggestion(object):
+class Upfans_Suggestion(object):#涨粉
     """docstring for upfans_suggestion"""
 
     def __init__(self, dir_path, order_data):

@@ -87,7 +87,7 @@ def LoadOrder(dir_path):
     return order_data, history_order_data
 
 
-def InteractData(order_data):
+def InteractData(order_data):#获取互动，曝光
     inter_data = {}
     r = redis.Redis(host='rs20468.hebe.grid.sina.com.cn', port=20468)
     #10.75.29.90:5861
@@ -267,7 +267,7 @@ def main(dir_path):
 
     #the dir_path use for storage mid content
     myBoWen = BowenSuggestion(dir_path, order_data)
-    bowen_result = myBoWen.order_data_process()
+    bowen_result = myBoWen.order_data_process()#博文质量检测
     print datetime.datetime.now(), " bowen process finish: bowen_result num is ", len(bowen_result)
 
     order_data, history_order_data = CtrData(order_data, bowen_result, inter_data, history_order_data)
@@ -286,7 +286,7 @@ def main(dir_path):
         print "words_seg erro,please input words by manu"
 
     print datetime.datetime.now(), " finish words segment"
-    myBagProb = BagProb(dir_path, order_data)
+    myBagProb = BagProb(dir_path, order_data)#定向包预测
     bags_recmd_result = myBagProb.Bag_Recmd()
     print datetime.datetime.now(), " BagProb finish: bags_recmd_result num is ", len(bags_recmd_result)
 
@@ -301,16 +301,16 @@ def main(dir_path):
         pass
     else:
         os.mkdir(dir_path + "/data/out_data/")
-    output_path = dir_path + '/data/out_data/update_data'
+    output_path = dir_path + '/data/out_data/update_data'#当次计算结果
     update_data = OutData(output_path, order_data, bowen_result, upfans_result, buy_result)
     print datetime.datetime.now(), " out data finish"
     #new_data use for select order  stop update  combine to old data
-    new_data_path = dir_path + '/data/out_data/new_data'
+    new_data_path = dir_path + '/data/out_data/new_data'#上次（半小时前）的计算结果
     if os.path.isfile(dir_path + "/data/out_data/new_data"):
         pass
     else:
         os.mknod(dir_path + "/data/out_data/new_data")
-    if os.path.isfile(dir_path + "/data/out_data/no_update_data"):
+    if os.path.isfile(dir_path + "/data/out_data/no_update_data"):#不再更新，已经计算完成（已经退出的、投放完成、超过24小时的订单）
         pass
     else:
         os.mknod(dir_path + "/data/out_data/no_update_data")

@@ -5,7 +5,10 @@ import json
 import re
 import cPickle as ce
 #############
-#using for  check order up/down 
+#using for  check order up/down
+""
+# 处理订单，转换成需要的格式
+""
 #
 
 class OnlineOrderProcess(object):
@@ -72,7 +75,7 @@ class OnlineOrderProcess(object):
             pass
         else:
             os.mkdir('../data')
-        if os.path.exists('../data/order_record.pkl'):
+        if os.path.exists('../data/order_record.pkl'):#文件读写可能会出错，如果出错，使用备份文件order_record_back.pkl
             try:
                 self.order_record = ce.load(open('../data/order_record.pkl', 'rb'))
                 shutil.copyfile('../data/order_record.pkl', '../data/order_record_back.pkl')
@@ -93,7 +96,7 @@ class OnlineOrderProcess(object):
                     print "YES modify"
                 self.order_record[adid] = self.order[adid]
                 self.order_record[adid]['time'] = str(datetime.datetime.now())
-        for adid in self.order_record.keys():
+        for adid in self.order_record.keys():#检查订单是否超时（投放超过24小时，删掉）
             if self.order_record[adid]['time'] < time_flag:
                 del self.order_record[adid]
 
@@ -106,7 +109,7 @@ class OnlineOrderProcess(object):
         return self.order_record
 
     def LoadData(self):
-        #data
+        #data 测试订单数据
         order_data = ce.load(open('../data/order_record.pkl', 'rb'))
         i = 0
         with open('./test.txt', 'r') as fr:

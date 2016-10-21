@@ -146,6 +146,3 @@ if __name__ == '__main__':
     recmd_bags = ce.load(open('../data/recmd_bags.pkl','rb'))
     mybuy_suggestion = Buy_Option('../',order_data,recmd_bags,bowen_result)
     mybuy_suggestion.buy_suggestion()
-
-        
-    

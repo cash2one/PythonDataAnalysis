@@ -6,12 +6,17 @@ import time  # 引入time模块
 
 ticks = time.time()
 print "当前时间戳为:", ticks
-fo = open("hello", "r")
+fo = open("foo.txt", "r")
 
 # str = fo.read(11)
 # print str
 index = 0
-for line in open("hello"):
+X=[]
+Y=[]
+for line in open("foo.txt"):
+    X.append(line.split("\t")[0:len(line.split("\t"))-1])#获取X
+    Y.append(line.split("\t")[-1])#获取Y
+
     index += 1
 
 ticks2 = time.time()
@@ -23,7 +28,7 @@ print "index: ", index
 """
 带缓存的文件读取
 """
-file = open("hello")
+file = open("foo.txt")
 
 ticks3 = time.time()
 index = 0

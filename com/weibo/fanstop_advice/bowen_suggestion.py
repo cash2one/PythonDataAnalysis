@@ -36,7 +36,7 @@ class BowenSuggestion(object):
         else:
             return 0, mid_content, video_flag
 
-    def short_url(self, mid_content):
+    def short_url(self, mid_content):#博文当中是否包含短链接
         #print 'mid_content:',mid_content
         short_url = []
         if mid_content != '':
@@ -65,7 +65,7 @@ class BowenSuggestion(object):
         return short_url
 
     ##cycle check bowen | such as transmit include two parts
-    def check_bowen_pic(self, line):
+    def check_bowen_pic(self, line):#检查博文当中是否有图片、视频、内容
         pic_flag = 0
         mid_content = ''
         video_flag = '0'
