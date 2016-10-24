@@ -21,9 +21,9 @@ fi
 echo "finish caculate"
 mv $MAIN_PATH/data/out_data/update_data $MAIN_PATH/data/out_data/new_data
 cat $MAIN_PATH/data/out_data/new_data $MAIN_PATH/data/out_data/no_update_data > $MAIN_PATH/data/out_data/candidate
-python $MAIN_PATH/script/remove_repeat.py
+python $MAIN_PATH/script/remove_repeat.py  #删除重复订单数据，当什么时候有重复订单?
 
-rsync $MAIN_PATH/data/out_data/candidate_data  /data0/fans_economy/headline/chenwei9
+rsync $MAIN_PATH/data/out_data/candidate_data  /data0/fans_economy/headline/chenwei9 #????为什么要再同步一下文件？
 #mv $MAIN_PATH/data/out_data/candi_back  /data0/fans_economy/headline/chenwei9/candidate_data
 
 time_now=`date`

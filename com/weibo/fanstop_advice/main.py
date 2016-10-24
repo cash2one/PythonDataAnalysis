@@ -141,7 +141,7 @@ def CtrData(order_data, bowen_result, inter_data, history_order_data):
             if order_data[adid]['feifen_num'] != 0:
                 ctr_num = 0
                 for act_code in inter_code:
-                    if 'nofans_' + act_code in inter_data[adid][0].keys():
+                    if 'nofans_' + act_code in inter_data[adid][0].keys():#非粉
                         ctr_num += int(inter_data[adid][0]['nofans_' + act_code])
                 if "extendfans" in inter_data[adid][1].keys():
                     order_data[adid]["feifen_expo"] = int(inter_data[adid][1]["extendfans"])
@@ -154,8 +154,8 @@ def CtrData(order_data, bowen_result, inter_data, history_order_data):
                 for act_code in inter_code:
                     #print 'fields_'+act_code,inter_data[adid][0].keys(),'fields_'+act_code in inter_data[adid][0].keys()
                     if 'fields_' + act_code in inter_data[adid][0].keys():
-                        if adid == '16081405019052998348':
-                            print 'ctr_num:', inter_data[adid][0]['field_' + act_code]
+                        # if adid == '16081405019052998348':
+                        #     print 'ctr_num:', inter_data[adid][0]['field_' + act_code]
                         ctr_num += int(inter_data[adid][0]['fields_' + act_code])
                 if "fieldfans" in inter_data[adid][1].keys():
                     order_data[adid]["orientation_expo"] = int(inter_data[adid][1]['fieldfans'])
@@ -286,12 +286,12 @@ def main(dir_path):
         print "words_seg erro,please input words by manu"
 
     print datetime.datetime.now(), " finish words segment"
-    myBagProb = BagProb(dir_path, order_data)#定向包预测
+    myBagProb = BagProb(dir_path, order_data) #定向包预测
     bags_recmd_result = myBagProb.Bag_Recmd()
     print datetime.datetime.now(), " BagProb finish: bags_recmd_result num is ", len(bags_recmd_result)
 
     myupfans = Upfans_Suggestion(dir_path, order_data)
-    upfans_result = myupfans.suggestion_result()
+    upfans_result = myupfans.suggestion_result() #涨粉建议
     print datetime.datetime.now(), " upfans suggestion finish: upfans_result num is ", len(upfans_result)
 
     mybuy_result = Buy_Option(dir_path, order_data, bags_recmd_result, bowen_result)
