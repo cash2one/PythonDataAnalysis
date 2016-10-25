@@ -10,7 +10,7 @@ echo $MAIN_PATH
 time_now=`date`
 echo "RUNNING START TIME: $time_now"
 
-python   $MAIN_PATH/script/main.py $MAIN_PATH
+python   $MAIN_PATH/script/main.py $MAIN_PATH #/data0/fans_economy/headline/chenwei9/fanstop_advice/
 if [ $? -ne 0 ];then
 	echo "main erro "
 	python   $MAIN_PATH/script/main.py $MAIN_PATH
