@@ -8,32 +8,45 @@ import datetime
 def ctr_week_avg(dir_path):
     ctr_data = {}
     history_order = ce.load(open(dir_path + '/data/history_order_data.pkl', 'rb'))
-    #history_order_back = ce.load(open('../data/history_order_record_back.pkl','rb'))
+    # history_order_back = ce.load(open('../data/history_order_record_back.pkl','rb'))
     time_60 = str(datetime.datetime.now() + datetime.timedelta(days=-60))
     time_8 = str(datetime.datetime.now() + datetime.timedelta(days=-10))
-    tmp_static = {'0fanstop_num': 0, '0fanstop_interact': 0.0, '1fanstop_num': 0, '1fanstop_interact': 0.0,
-                  '0feifen_num': 0, \
-                  '0feifen_interact': 0.0, '1feifen_num': 0, '1feifen_interact': 0.0, '0orientation_num': 0,
-                  '0orientation_interact': 0.0, '1orientation_num': 0, '1orientation_interact': 0.0}
-    item_list = ['fanstop', 'feifen', 'orientation']
+    #各个统计数量的统计
+    tmp_static = {'0fanstop_num': 0,
+                  '0fanstop_interact': 0.0,
+                  '1fanstop_num': 0,
+                  '1fanstop_interact': 0.0,
+                  '0feifen_num': 0,
+                  '0feifen_interact': 0.0,
+                  '1feifen_num': 0,
+                  '1feifen_interact': 0.0,
+                  '0orientation_num': 0,
+                  '0orientation_interact': 0.0,
+                  '1orientation_num': 0,
+                  '1orientation_interact': 0.0,
+                  '0sel_num': 0,  # 无视频，指定账号，曝光数
+                  '0sel_interact': 0.0,
+                  '1sel_num': 0,  # 有视频，指定账号，曝光数
+                  '1sel_interact': 0.0}
+    item_list = ['fanstop', 'feifen', 'orientation', 'sel']#粉条，非粉（浅粉），定向（兴趣用户），指定账号
     expo_flag = '_expo'
     expo_num = 1
     sta_ctr = {}
     recmd_num = 0
     sta_num = {'0_fanstop_num': 0, '1_fanstop_num': 0, '0_feifen_num': 0, '1_feifen_num': 0, '0_orientation_num': 0,
-               '1_orientation_num': 0}
+               '1_orientation_num': 0, '0_sel_num': 0, '1_sel_num': 0}
     for (adid, values) in history_order.items():
         if adid.endswith('week') or values['time'] < time_8:
             continue
-        #history_order_back[adid] = values
+        # history_order_back[adid] = values
         for way in item_list:
             if "video_flag" not in values.keys():
                 print adid, values
                 continue
             if way + expo_flag not in values.keys():
                 expo_num += 1
-            #print adid,values
-            #print values["video_flag"],values[way+'_ctr']
+            # print adid,values
+            # print values["video_flag"],values[way+'_ctr']
             tmp_static[str(values["video_flag"]) + way + '_interact'] += float(values[way + '_ctr']) * values[
                 way + expo_flag]
             tmp_static[str(values["video_flag"]) + way + '_num'] += values[way + expo_flag]
@@ -61,11 +74,11 @@ def ctr_week_avg(dir_path):
     print 'recmd_num:', recmd_num
     print "no expo key num:", expo_num
     ctr_week_out = {}
-    for (k, v) in sta_ctr.items():
+    for (k, v) in sta_ctr.items():#计算分布
         split_num = 0
         tmp_tuple = sorted(v.items(), key=lambda d: d[0], reverse=True)
-        #if '0fanstop' in k:
-        #	print k,tmp_tuple
+        # if '0fanstop' in k:
+        # print k,tmp_tuple
         valid_num = float(sta_num[k[:-3] + 'num']) * 0.75
         if float(tmp_tuple[len(tmp_tuple) - 1][1]) / int(sta_num[k[:-3] + 'num']) > 0.5:
             valid_num = (float(sta_num[k[:-3] + 'num']) - float(tmp_tuple[len(tmp_tuple) - 1][1])) * 0.95
@@ -93,7 +106,7 @@ def ctr_week_avg(dir_path):
                 continue
             history_ctr_week[take[0]] = float(take[1])
             if float(ctr_week_out[take[0]]) / float(take[1]) > 1.25 or float(ctr_week_out[take[0]]) / float(
-                    take[1]) < 0.75:
+                    take[1]) < 0.75:#如果ctr波动过大，波动超过25%，则不更新
                 update_flag = 0
     if 1 == update_flag:
         with open(dir_path + '/data/ctr_week_avg_update.txt', 'w') as fw:
@@ -106,7 +119,7 @@ def ctr_week_avg(dir_path):
     for (k1, v1) in sta_ctr.items():
         for (k2, v2) in v1.items():
             fw.write(k1 + "\t" + k2 + "\t" + str(v2) + "\n")
-        #ce.dump(history_order,open('../data/history_order_record_check.pkl','wb'))
+            # ce.dump(history_order,open('../data/history_order_record_check.pkl','wb'))
 
 
 if __name__ == '__main__':

@@ -128,6 +128,9 @@ def CtrData(order_data, bowen_result, inter_data, history_order_data):
         order_data[adid]["fanstop_expo"] = 0
         order_data[adid]["orientation_expo"] = 0
         order_data[adid]['video_flag'] = 0
+        order_data[adid]['sel_ctr'] = 0.0
+        order_data[adid]["sel_expo"] = 0
+
         if adid in inter_data.keys():
             for itm in inter_data[adid][0].keys():
                 if '25000003' in itm or '80000001' in itm:
@@ -173,6 +176,19 @@ def CtrData(order_data, bowen_result, inter_data, history_order_data):
                     order_data[adid]['fanstop_ctr'] = float(ctr_num) / int(inter_data[adid][1]['fanstop']) if int(
                         inter_data[adid][1]['fanstop']) != 0 else 0
                 #print 'fans_top_ctr:',ctr_num,inter_data[adid][1]['fanstop'],order_data[adid]['fanstop_ctr']
+            if order_data[adid]['sel_uid']:#sel_uid为order_data中的名字，字典数据。
+                """
+                新加指定账号数据
+                """
+                ctr_num = 0
+                for act_code in inter_code:
+                    if 'desdfans_' + act_code in inter_data[adid][0].keys():
+                        ctr_num += int(inter_data[adid][0]['desdfans_' + act_code])
+                if "desdfans" in inter_data[adid][1].keys():
+                    order_data[adid]["sel_expo"] = int(inter_data[adid][1]['desdfans'])
+                    order_data[adid]['sel_ctr'] = float(ctr_num) / int(inter_data[adid][1]['desdfans']) if int(
+                        inter_data[adid][1]['desdfans']) != 0 else 0
+
         #defualt value 0: no video  1:have
         order_data[adid]['bowen_test_flag'] = 0
         #print 'video_flag:',adid,bowen_result,order_data[adid]['video_flag']
@@ -258,11 +274,11 @@ def combine_data(fpath_1, fpath_2, update_data):
 
 def main(dir_path):
     print datetime.datetime.now(), dir_path + "/data/order_data.txt"
-    order_data, history_order_data = LoadOrder(dir_path)
+    order_data, history_order_data = LoadOrder(dir_path)#！！！计算指定账号的7天平均CTR
     print datetime.datetime.now(), " load data finsh: order_data num is ", len(
         order_data), "history_order_data num is ", len(history_order_data)
 
-    inter_data = InteractData(order_data)
+    inter_data = InteractData(order_data)#获取互动数据
     print datetime.datetime.now(), " inter_data finsh: inter_data num is ", len(inter_data)
 
     #the dir_path use for storage mid content
@@ -270,7 +286,7 @@ def main(dir_path):
     bowen_result = myBoWen.order_data_process()#博文质量检测
     print datetime.datetime.now(), " bowen process finish: bowen_result num is ", len(bowen_result)
 
-    order_data, history_order_data = CtrData(order_data, bowen_result, inter_data, history_order_data)
+    order_data, history_order_data = CtrData(order_data, bowen_result, inter_data, history_order_data)#24小时CTR
     ce.dump(order_data, open(dir_path + '/data/order_data.pkl', 'wb'))
     print datetime.datetime.now(), " ctr caculate finish: CtrData order_data num is ", len(
         order_data), "CtrData history_order_data num is ", len(history_order_data)
@@ -294,7 +310,7 @@ def main(dir_path):
     upfans_result = myupfans.suggestion_result() #涨粉建议
     print datetime.datetime.now(), " upfans suggestion finish: upfans_result num is ", len(upfans_result)
 
-    mybuy_result = Buy_Option(dir_path, order_data, bags_recmd_result, bowen_result)
+    mybuy_result = Buy_Option(dir_path, order_data, bags_recmd_result, bowen_result)#购买建议！！！！
     buy_result = mybuy_result.buy_suggestion()
     print datetime.datetime.now(), " buy option finish: buy_result num is ", sum([len(i) for i in buy_result.values()])
     if os.path.isdir(dir_path + "/data/out_data/"):
