@@ -3,6 +3,7 @@ import cPickle as ce
 import time
 import datetime
 import codecs
+import sys_constant as sc
 import sys
 reload(sys) 
 sys.setdefaultencoding('utf8')
@@ -86,6 +87,160 @@ class Buy_Option(object):
                 else:
                     self.buy_result[adid_mod][adid] = [0,u'本次推广还有不少优化空间，试试投给对'+tmpstr+u'感兴趣的用户吧！',interest_bag,1]
 
+    def buy_option_v2(self, adid, adid_mod, values, nofans_volume, interest_bag, video_flag):
+        buy_type = values['buy_type']
+        interest_bag = ""
+        interest_flag = 0
+        if len(interest_bag) > 0:
+            interest_bag = self.bag_name_dic[interest_bag[0][0]]
+            interest_flag = 1
+
+        fanstop_ctr = values['fanstop_ctr']
+        feifen_ctr = values['feifen_ctr']
+        orientation_ctr = values['orientation_ctr']
+        sel_uid_ctr = values['sel_uid_ctr']
+        fanstop_expo = values['fanstop_expo']
+        feifen_expo = values['feifen_expo']
+        orientation_expo = values['orientation_expo']
+        sel_uid_expo = values['sel_uid_expo']
+
+        fanstop_ctr_week = self.order_data[video_flag+'_fanstop_ctr_week']
+        feifen_ctr_week = self.order_data[video_flag+'_feifen_ctr_week']
+        orientation_ctr_week = self.order_data[video_flag+'_orientation_ctr_week']
+        sel_uid_ctr_week = self.order_data[video_flag+'_sel_uid_ctr_week']
+        is_high = self.is_high_interact_rating(fanstop_ctr, feifen_ctr, orientation_ctr, sel_uid_ctr, fanstop_expo,
+                                               feifen_expo, orientation_expo, sel_uid_expo, fanstop_ctr_week,
+                                               feifen_ctr_week, orientation_ctr_week, sel_uid_ctr_week)
+        suggestion = self.get_suggestion_info_by_condition(buy_type, is_high, feifen_expo, nofans_volume, interest_bag)
+        self.buy_result[adid_mod][adid] = [interest_flag, suggestion, interest_bag, 1 if sc.bowen_toutiao_sel_uid == buy_type else 0]
+
+    def is_high_interact_rating(self, fanstop_ctr, feifen_ctr, orientation_ctr, sel_uid_ctr, fanstop_expo, feifen_expo, orientation_expo,
+                          sel_uid_expo, fanstop_ctr_week, feifen_ctr_week, orientation_ctr_week, sel_uid_ctr_week):
+        """
+        计算当前广告的互动率是否高于平均的互动率：
+                            (粉条ctr*粉条曝光占比*粉条7天平均ctr占比)
+                            +(非粉ctr*非粉曝光占比*非粉7天平均ctr占比)
+                            +(兴趣ctr*兴趣曝光占比*兴趣7天平均ctr占比)
+                            +(指定账号ctr*指定账号曝光占比*指定账号7天平均ctr占比)
+
+        :param fanstop_ctr:当天粉条ctr
+        :param feifen_ctr:
+        :param orientation_ctr:
+        :param sel_uid_ctr:
+        :param fanstop_expo: 粉条曝光
+        :param feifen_expo:
+        :param orientation_expo:
+        :param sel_uid_expo:
+        :param fanstop_ctr_week:粉条周平均ctr
+        :param feifen_ctr_week:
+        :param orientation_ctr_week:
+        :param sel_uid_ctr_week:
+        :return:
+        """
+        sum_ctr_week = fanstop_ctr_week + feifen_ctr_week + orientation_ctr_week + sel_uid_ctr_week
+        sum_expo = fanstop_expo + feifen_expo + orientation_expo + sel_uid_expo #曝光总数
+        w11, w12, w21, w22, w31, w32, w41, w42 = 0
+        if sum_expo and sum_ctr_week:
+            w11 = float(fanstop_expo) / sum_expo
+            w12 = float(fanstop_ctr_week) / sum_ctr_week
+            w21 = float(feifen_expo) / sum_expo
+            w22 = float(feifen_ctr_week) / sum_ctr_week
+            w31 = float(orientation_expo) / sum_expo
+            w32 = float(orientation_ctr_week) / sum_ctr_week
+            w41 = float(sel_uid_expo) / sum_expo
+            w42 = float(sel_uid_ctr_week) / sum_ctr_week
+
+        a = fanstop_ctr * w11 * w12
+        b = feifen_ctr * w21 * w22
+        c = orientation_ctr * w31 * w32
+        d = sel_uid_ctr * w41 * w42
+        adid_rating = a + b + c + d
+        sum_rating = fanstop_ctr_week * w11 * w12 + feifen_ctr_week * w21 * w22 + orientation_ctr_week * w31 * w32 + sel_uid_ctr_week * w41 * w42
+
+        return adid_rating > sum_rating
+
+    def get_suggestion_info_by_condition(self, buy_type, is_high, feifen_expo, feifen_maxnum, interest_bag):
+        res = ""
+        feifen_ratio = float(feifen_expo) / feifen_maxnum
+        feifen_threshold = 0.3
+
+        if buy_type == sc.bowen_toutiao_fanstop:
+            res = "推广效果很赞，试试投给潜在粉丝、指定账号相似粉丝、兴趣用户和更多粉丝，获取更多曝光和互动吧！" if is_high else "本次推广还有不少优化空间，试试投给潜在粉丝、指定账号相似粉丝、兴趣用户和更多粉丝吧！"
+        elif buy_type == sc.bowen_toutiao_feifen:
+            if is_high and feifen_ratio < feifen_threshold:
+                res = "推广效果很赞，试试投给粉丝、指定账号相似粉丝、兴趣用户和更多的潜在粉丝，获取更多曝光和互动吧！"
+            elif is_high and feifen_ratio >= feifen_threshold:
+                res = "推广效果很赞，试试投给粉丝、指定账号相似粉丝和兴趣用户获取更多曝光和互动吧！"
+            else:
+                res = "本次推广还有不少优化空间，试试投给粉丝、兴趣用户和指定账号相似粉丝吧！"
+        elif buy_type == sc.bowen_toutiao_orientation:
+            res = "推广效果很赞，试试投给粉丝、潜在粉丝、指定账号相似粉丝和更多兴趣用户，获取更多曝光和互动吧！" if is_high else "本次推广还有不少优化空间，试试投给粉丝、潜在粉丝、指定账号相似粉丝和其它兴趣用户吧！"
+        elif buy_type == sc.bowen_toutiao_sel_uid:
+            res = "推广效果很赞，试试投给粉丝、潜在粉丝、兴趣用户和更多指定账号相似粉丝，获取更多曝光和互动吧！" if is_high else "本次推广还有不少优化空间，试试投给粉丝、潜在粉丝、兴趣用户和其它指定账号相似粉丝吧！"
+        elif buy_type == sc.bowen_toutiao_fanstop_feifen_orientation_sel_uid:
+            if is_high and feifen_ratio < feifen_threshold:
+                res = "推广效果很赞，试试投给更多粉丝、潜在粉丝、兴趣用户和指定账号相似粉丝，获取更多曝光和互动吧！"
+            elif is_high and feifen_ratio >= feifen_threshold:
+                res = "推广效果很赞，试试投给更多粉丝、兴趣用户和指定账号相似粉丝，获取更多曝光和互动吧！"
+            else:
+                res = "本次推广还有不少优化空间，试试投给其它兴趣用户、指定账号相似粉丝和更多粉丝吧！"
+        elif buy_type == sc.bowen_toutiao_fanstop_feifen:
+            if is_high and feifen_ratio < feifen_threshold:
+                res = "推广效果很赞，试试投给兴趣用户、指定账号相似粉丝和更多粉丝、潜在粉丝，获取更多曝光和互动吧！"
+            elif is_high and feifen_ratio >= feifen_threshold:
+                res = "推广效果很赞，试试投给兴趣用户、指定账号相似粉丝和更多粉丝，获取更多曝光和互动吧！"
+            else:
+                res = "本次推广还有不少优化空间，试试投给更多粉丝、兴趣用户和指定账号相似粉丝吧！"
+        elif buy_type == sc.bowen_toutiao_fanstop_orientation:
+            res = "推广效果很赞，试试投给潜在粉丝、指定账号相似粉丝和更多粉丝、兴趣用户，获取更多曝光和互动吧！" if is_high else "本次推广还有不少优化空间，试试投给潜在粉丝、指定账号相似粉丝、更多粉丝和其它兴趣用户吧！"
+        elif buy_type == sc.bowen_toutiao_fanstop_sel_uid:
+            res = "推广效果很赞，试试投给潜在粉丝、兴趣用户和更多粉丝、指定账号相似粉丝，获取更多曝光和互动吧！" if is_high else "本次推广还有不少优化空间，试试投给潜在粉丝、兴趣用户、更多粉丝和其它指定账号相似粉丝吧！"
+        elif buy_type == sc.bowen_toutiao_feifen_orientation:
+            if is_high and feifen_ratio < feifen_threshold:
+                res = "推广效果很赞，试试投给粉丝、指定账号相似粉丝和更多潜在粉丝、兴趣用户，获取更多曝光和互动吧！"
+            elif is_high and feifen_ratio >= feifen_threshold:
+                res = "推广效果很赞，试试投给粉丝、指定账号相似粉丝和其它兴趣用户，获取更多曝光和互动吧！"
+            else:
+                res = "本次推广还有不少优化空间，试试投给粉丝、指定账号相似粉丝和其它兴趣用户吧！"
+        elif buy_type == sc.bowen_toutiao_feifen_sel_uid:
+            if is_high and feifen_ratio < feifen_threshold:
+                res = "推广效果很赞，试试投给粉丝、兴趣用户和更多潜在粉丝、指定账号相似粉丝，获取更多曝光和互动吧！"
+            elif is_high and feifen_ratio >= feifen_threshold:
+                res = "推广效果很赞，试试投给粉丝、兴趣用户和更多指定账号相似粉丝，获取更多曝光和互动吧！"
+            else:
+                res = "本次推广还有不少优化空间，试试投给粉丝、兴趣用户和其它指定账号相似粉丝吧！"
+        elif buy_type == sc.bowen_toutiao_orientation_sel_uid:
+            res = "推广效果很赞，试试投给粉丝、潜在粉丝和更多兴趣用户、指定账号相似粉丝，获取更多曝光和互动吧！" if is_high else "本次推广还有不少优化空间，试试投给粉丝、潜在粉丝和其它兴趣用户、指定账号相似粉丝吧！"
+        elif buy_type == sc.bowen_toutiao_fanstop_feifen_orientation:
+            if is_high and feifen_ratio < feifen_threshold:
+                res = "推广效果很赞，试试投给指定账号相似粉丝和更多粉丝、潜在粉丝、兴趣用户，获取更多曝光和互动吧！"
+            elif is_high and feifen_ratio >= feifen_threshold:
+                res = "推广效果很赞，试试投给指定账号相似粉丝和更多粉丝、兴趣用户，获取更多曝光和互动吧！"
+            else:
+                res = "本次推广还有不少优化空间，试试投给指定账号相似粉丝和更多粉丝、其它兴趣用户吧！"
+        elif buy_type == sc.bowen_toutiao_fanstop_feifen_sel_uid:
+            if is_high and feifen_ratio < feifen_threshold:
+                res = "推广效果很赞，试试投给兴趣用户和更多粉丝、潜在粉丝、指定账号相似粉丝，获取更多曝光和互动吧！"
+            elif is_high and feifen_ratio >= feifen_threshold:
+                res = "推广效果很赞，试试投给兴趣用户和更多粉丝、指定账号相似粉丝，获取更多曝光和互动吧！"
+            else:
+                res = "本次推广还有不少优化空间，试试投给兴趣用户、更多粉丝和其它指定账号相似粉丝吧！"
+        elif buy_type == sc.bowen_toutiao_fanstop_orientation_sel_uid:
+            res = "推广效果很赞，试试投给潜在粉丝和更多粉丝、兴趣用户、指定账号相似粉丝，获取更多曝光和互动吧！" if is_high else "本次推广还有不少优化空间，试试投给潜在粉丝、更多粉丝和其它兴趣用户、指定账号相似粉丝吧！"
+        elif buy_type == sc.bowen_toutiao_feifen_orientation_sel_uid:
+            if is_high and feifen_ratio < feifen_threshold:
+                res = "推广效果很赞，试试投给粉丝和更多潜在粉丝、兴趣用户、指定账号相似粉丝，获取更多曝光和互动吧！"
+            elif is_high and feifen_ratio >= feifen_threshold:
+                res = "推广效果很赞，试试投给粉丝和更多兴趣用户、指定账号相似粉丝，获取更多曝光和互动吧！"
+            else:
+                res = "本次推广还有不少优化空间，试试投给粉丝和其它兴趣用户、指定账号相似粉丝吧！"
+        else:
+            res = "本次推广还有不少优化空间，试试投给潜在粉丝、指定账号相似粉丝、兴趣用户和更多粉丝吧！"
+        res = res.replace("兴趣", "对" + interest_bag + "感兴趣的") if interest_bag else res #如果有兴趣包推荐，则添加兴趣包
+        # res = unicode(res, "utf-8")
+        res = u''+res
+        return res
+
     def bag_volume(self):
         with open(self.dir_path+'/data/bag_volume.txt','r') as fr:
             for line in fr:
@@ -108,7 +263,7 @@ class Buy_Option(object):
                     if len(self.recmd_bags[adid]['recmd_bags']) < i+1:
                         break
                     try:
-                        tmp.append([self.recmd_bags[adid]['recmd_bags'][i],self.recmd_bags[adid]['recmd_bags_v']])
+                        tmp.append([self.recmd_bags[adid]['recmd_bags'][i], self.recmd_bags[adid]['recmd_bags_v']])
                     except:
                         print self.recmd_bags[adid]
                         raise RuntimeError('check_recmd_bags error')
@@ -116,6 +271,7 @@ class Buy_Option(object):
                     if 3 == num_flag:
                         break
         return tmp
+
     def buy_suggestion(self):
         print 'buy_suggestion begin: order num is ',len(self.order_data)
         self.bag_name()
@@ -141,8 +297,8 @@ class Buy_Option(object):
         return self.buy_result
 
 if __name__ == '__main__':
-    order_data = ce.load(open('../data/order_data.pkl','rb'))
-    bowen_result = ce.load(open('../data/bowen_advise.pkl','rb'))
-    recmd_bags = ce.load(open('../data/recmd_bags.pkl','rb'))
-    mybuy_suggestion = Buy_Option('../',order_data,recmd_bags,bowen_result)
+    order_data = ce.load(open('../data/order_data.pkl', 'rb'))
+    bowen_result = ce.load(open('../data/bowen_advise.pkl', 'rb'))
+    recmd_bags = ce.load(open('../data/recmd_bags.pkl', 'rb'))
+    mybuy_suggestion = Buy_Option('../', order_data, recmd_bags, bowen_result)
     mybuy_suggestion.buy_suggestion()

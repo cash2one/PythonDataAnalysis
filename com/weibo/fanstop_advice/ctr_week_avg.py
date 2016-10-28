@@ -24,17 +24,17 @@ def ctr_week_avg(dir_path):
                   '0orientation_interact': 0.0,
                   '1orientation_num': 0,
                   '1orientation_interact': 0.0,
-                  '0sel_num': 0,  # 无视频，指定账号，曝光数
-                  '0sel_interact': 0.0,
-                  '1sel_num': 0,  # 有视频，指定账号，曝光数
-                  '1sel_interact': 0.0}
+                  '0sel_uid_num': 0,  # 无视频，指定账号，曝光数
+                  '0sel_uid_interact': 0.0,
+                  '1sel_uid_num': 0,  # 有视频，指定账号，曝光数
+                  '1sel_uid_interact': 0.0}
     item_list = ['fanstop', 'feifen', 'orientation', 'sel']#粉条，非粉（浅粉），定向（兴趣用户），指定账号
     expo_flag = '_expo'
     expo_num = 1
     sta_ctr = {}
     recmd_num = 0
     sta_num = {'0_fanstop_num': 0, '1_fanstop_num': 0, '0_feifen_num': 0, '1_feifen_num': 0, '0_orientation_num': 0,
-               '1_orientation_num': 0, '0_sel_num': 0, '1_sel_num': 0}
+               '1_orientation_num': 0, '0_sel_uid_num': 0, '1_sel_uid_num': 0}
     for (adid, values) in history_order.items():
         if adid.endswith('week') or values['time'] < time_8:
             continue

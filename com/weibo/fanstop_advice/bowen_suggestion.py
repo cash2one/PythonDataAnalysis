@@ -30,37 +30,29 @@ class BowenSuggestion(object):
             video_flag = check_video(url_test)
         else:
             video_flag = 0
-        #print 'video_flag',video_flag
         if pic_flag == 1:
             return 1, mid_content, video_flag
         else:
             return 0, mid_content, video_flag
 
     def short_url(self, mid_content):#博文当中是否包含短链接
-        #print 'mid_content:',mid_content
         short_url = []
         if mid_content != '':
             flag_s = 0
             content = mid_content.split('\n')
-            #print 'content:',content
             if len(content) > 1:
                 mid_content = ' '.join(content)
             else:
-                #print 'content[0]'
                 mid_content = content[0]
-            #print mid_content,'len mid_content:',len(mid_content)
             flag_e = len(mid_content)
             content = mid_content.split(' ')
-            #print len(mid_content)
             for itm in content:
                 mm = re.search('http://\w{1,}.*\w', itm)
                 if mm != None:
                     test_url = mm.group()
-                    #print 'http: YES',test_url
                     if len(test_url) > 20:
                         continue
                     tmp = 'url_short=' + test_url
-                    #print tmp,len(tmp)
                     short_url.append(tmp)
         return short_url
 
@@ -113,14 +105,8 @@ class BowenSuggestion(object):
                     bowen_result[k_mod][k] = mid_record_dic[mid_mod][mid][0:2]
                     continue
                 flag, mid_content, video_flag = self.get_bowen_info(int(mid))
-                flag = 1
-                mid_content = ""
-                video_flag = 0
                 bowen_result[k_mod][k] = [flag, video_flag]
-                #print 'bowen_result:',k,flag,video_flag
                 fw.write(mid + '\t' + mid_content.replace("\n", " ") + '\n')
-                #if 0 == flag:
-                #	bowen_result[k] = [flag,video_flag]
                 mid_record_dic[mid_mod][mid] = [flag, video_flag, dt_wk]
         print 'mid_record_dic num:', len(mid_record_dic)
         ce.dump(mid_record_dic, open(self.dir_path + "/data/mid_record_dic.pkl", 'wb'))

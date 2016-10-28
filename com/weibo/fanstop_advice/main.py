@@ -128,8 +128,8 @@ def CtrData(order_data, bowen_result, inter_data, history_order_data):
         order_data[adid]["fanstop_expo"] = 0
         order_data[adid]["orientation_expo"] = 0
         order_data[adid]['video_flag'] = 0
-        order_data[adid]['sel_ctr'] = 0.0
-        order_data[adid]["sel_expo"] = 0
+        order_data[adid]['sel_uid_ctr'] = 0.0
+        order_data[adid]["sel_uid_expo"] = 0
 
         if adid in inter_data.keys():
             for itm in inter_data[adid][0].keys():
@@ -185,8 +185,8 @@ def CtrData(order_data, bowen_result, inter_data, history_order_data):
                     if 'desdfans_' + act_code in inter_data[adid][0].keys():
                         ctr_num += int(inter_data[adid][0]['desdfans_' + act_code])
                 if "desdfans" in inter_data[adid][1].keys():
-                    order_data[adid]["sel_expo"] = int(inter_data[adid][1]['desdfans'])
-                    order_data[adid]['sel_ctr'] = float(ctr_num) / int(inter_data[adid][1]['desdfans']) if int(
+                    order_data[adid]["sel_uid_expo"] = int(inter_data[adid][1]['desdfans'])
+                    order_data[adid]['sel_uid_ctr'] = float(ctr_num) / int(inter_data[adid][1]['desdfans']) if int(
                         inter_data[adid][1]['desdfans']) != 0 else 0
 
         #defualt value 0: no video  1:have

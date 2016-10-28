@@ -23,8 +23,8 @@ mv $MAIN_PATH/data/out_data/update_data $MAIN_PATH/data/out_data/new_data
 cat $MAIN_PATH/data/out_data/new_data $MAIN_PATH/data/out_data/no_update_data > $MAIN_PATH/data/out_data/candidate
 python $MAIN_PATH/script/remove_repeat.py  #删除重复订单数据，当什么时候有重复订单?
 
-rsync $MAIN_PATH/data/out_data/candidate_data  /data0/fans_economy/headline/chenwei9 #????为什么要再同步一下文件？
-#mv $MAIN_PATH/data/out_data/candi_back  /data0/fans_economy/headline/chenwei9/candidate_data
+#rsync $MAIN_PATH/data/out_data/candidate_data  /data0/fans_economy/headline/chenwei9 #在这个文件夹下，
+rsync $MAIN_PATH/data/out_data/candidate_data_yizhou  /data0/fans_economy/headline/chenwei9 #在这个文件夹下，
 
 time_now=`date`
 echo "RUNNING END TIME: $time_now"
@@ -67,4 +67,3 @@ if [[ "$hour" == "00" ]];then
 	hadoop fs -put $MAIN_PATH/fanstop_advice_back.tar.gz $hadoop_back
 fi
 exit 0
-#backup program svn

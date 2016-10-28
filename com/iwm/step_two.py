@@ -169,6 +169,8 @@ def main():
     get_range_by_dish_name(all_range, shop_id_products)
     # get_all_dishes(shop_dishes_info_path)
     # get_wid_dishes(shop_id_products)
+    a={}
+
 
 if __name__ == '__main__':
     main()
