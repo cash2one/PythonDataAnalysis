@@ -28,7 +28,7 @@ def ctr_week_avg(dir_path):
                   '0sel_uid_interact': 0.0,
                   '1sel_uid_num': 0,  # 有视频，指定账号，曝光数
                   '1sel_uid_interact': 0.0}
-    item_list = ['fanstop', 'feifen', 'orientation', 'sel']#粉条，非粉（浅粉），定向（兴趣用户），指定账号
+    item_list = ['fanstop', 'feifen', 'orientation', 'sel_uid']#粉条，非粉（浅粉），定向（兴趣用户），指定账号
     expo_flag = '_expo'
     expo_num = 1
     sta_ctr = {}

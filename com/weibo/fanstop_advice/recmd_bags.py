@@ -125,6 +125,9 @@ class BagProb(object):
                     continue
                 if bag_code in bag_similar.keys():
                     bags_set = set(bag_similar[bag_code])
+                else:
+                    print bag_code
+                    bags_set = set()
                 for (k, v) in self.bag_leve.items():
                     if bag_code in self.bag_leve.keys() and v > self.bag_leve[bag_code]:
                         bags_set.add(k)
@@ -156,10 +159,10 @@ class BagProb(object):
                         if 0 == flag:
                             continue
                     tmp_dic[i[0]] = float(i[1])
-                    if i[0] in bag_similar[bag_code]:
-                        simi_flag = '1'
-                    else:
-                        simi_flag = '0'
+                    # if i[0] in bag_similar[bag_code]:
+                    #     simi_flag = '1'
+                    # else:
+                    #     simi_flag = '0'
                         #fw2.write(i[0]+':'+bag_name[i[0]]+' :value_'+str(i[1])+' :level_'+str(self.bag_leve[i[0]])+' :simi_'+simi_flag+'\t')
                         #fw2.write('\n')
             tmp = sorted(tmp_dic.iteritems(), key=lambda d: d[1], reverse=True)

@@ -139,7 +139,7 @@ class Buy_Option(object):
         """
         sum_ctr_week = fanstop_ctr_week + feifen_ctr_week + orientation_ctr_week + sel_uid_ctr_week
         sum_expo = fanstop_expo + feifen_expo + orientation_expo + sel_uid_expo #曝光总数
-        w11, w12, w21, w22, w31, w32, w41, w42 = 0
+        w11, w12, w21, w22, w31, w32, w41, w42 = 0,0,0,0,0,0,0,0
         if sum_expo and sum_ctr_week:
             w11 = float(fanstop_expo) / sum_expo
             w12 = float(fanstop_ctr_week) / sum_ctr_week
@@ -160,7 +160,9 @@ class Buy_Option(object):
         return adid_rating > sum_rating
 
     def get_suggestion_info_by_condition(self, buy_type, is_high, feifen_expo, feifen_maxnum, interest_bag):
-        res = ""
+        res = "本次推广还有不少优化空间，试试投给潜在粉丝、指定账号相似粉丝、兴趣用户和更多粉丝吧！"
+        if not feifen_maxnum:
+            return res
         feifen_ratio = float(feifen_expo) / feifen_maxnum
         feifen_threshold = 0.3
 
@@ -288,9 +290,9 @@ class Buy_Option(object):
             if adid_mod not in self.buy_result.keys():
                 self.buy_result[adid_mod] = {}
             if adid_mod in self.bowen_result.keys() and adid in self.bowen_result[adid_mod].keys() and '1' == self.bowen_result[adid_mod][adid][1]:
-                self.buy_option(adid,adid_mod,values,nofans_volume,interest_bag,'1')
+                self.buy_option_v2(adid,adid_mod,values,nofans_volume,interest_bag,'1')
             else:
-                self.buy_option(adid,adid_mod,values,nofans_volume,interest_bag,'0')
+                self.buy_option_v2(adid,adid_mod,values,nofans_volume,interest_bag,'0')
         print 'buy_suggestion end: result num is ',len(self.buy_result)
         #ce.dump(self.buy_result,open('../data/buy_suggestion.pkl','wb'))
         print sum([len(i) for i in self.buy_result.values()])
