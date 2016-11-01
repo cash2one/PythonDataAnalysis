@@ -165,7 +165,7 @@ class Buy_Option(object):
             return res
         feifen_ratio = float(feifen_expo) / feifen_maxnum
         feifen_threshold = 0.3
-
+        buy_type=int(buy_type)
         if buy_type == sc.bowen_toutiao_fanstop:
             res = "推广效果很赞，试试投给潜在粉丝、指定账号相似粉丝、兴趣用户和更多粉丝，获取更多曝光和互动吧！" if is_high else "本次推广还有不少优化空间，试试投给潜在粉丝、指定账号相似粉丝、兴趣用户和更多粉丝吧！"
         elif buy_type == sc.bowen_toutiao_feifen:

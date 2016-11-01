@@ -5,6 +5,7 @@ import json
 import re
 import cPickle as ce
 import sys_constant as sc
+import logging as logger
 # ############
 # using for  check order up/down
 # 处理订单，转换成需要的格式
@@ -13,6 +14,7 @@ import sys_constant as sc
 
 class OnlineOrderProcess(object):
     """docstring for OnlineOrderPrecess"""
+    logger.basicConfig(level=logger.DEBUG, format='%(asctime)s %(levelname)s %(filename)s[line:%(lineno)d] %(message)s')
 
     def __init__(self, fpath_order, fpath_out):
         super(OnlineOrderProcess, self).__init__()
@@ -79,15 +81,22 @@ class OnlineOrderProcess(object):
                     self.order[adid]['buy_type'] = 0
                     self.order[adid]['bag_code'] = []
                     self.order[adid]['sel_uid'] = {}
+                    self.order[adid]['is_buy_fanstop'] = False
+                    self.order[adid]['is_buy_feifen'] = False
+                    self.order[adid]['is_buy_orientation'] = False
+                    self.order[adid]['is_buy_sel_uid'] = False
                 # 指定账号
                 if buy_type.startswith(sc.adid_dataprod_buy_type_sel_uid):
                     self.order[adid]['sel_uid'][buy_type] = [buy_num, max_buy_num]
+                    self.order[adid]['is_buy_sel_uid'] = True
                 #粉条
                 elif buy_type == sc.adid_dataprod_buy_type_fanstop:
                     self.order[adid]['fanstop_num'] = int(buy_num)
+                    self.order[adid]['is_buy_fanstop'] = True
                 #非粉
                 elif buy_type == sc.adid_dataprod_buy_type_fei_fen:
                     self.order[adid]['feifen_num'] = int(buy_num)
+                    self.order[adid]['is_buy_feifen'] = True
                     if max_buy_num == 'NULL':
                         print line
                     else:
@@ -96,6 +105,7 @@ class OnlineOrderProcess(object):
                 elif buy_type.startswith(sc.adid_dataprod_buy_type_orientation):
                     self.order[adid]['orientation_num'] += int(buy_num)
                     self.order[adid]['bag_code'].append([buy_type, buy_num])
+                    self.order[adid]['is_buy_orientation'] = True
 
     def cal_order_buy_type(self):
         """
@@ -105,15 +115,17 @@ class OnlineOrderProcess(object):
         with open(self.fpath_order, 'r') as fr:
             for line in fr:
                 adid = line.strip().split()[0]
-                if adid in self.order:  # 如果该广告id在order中，则进行购买类型计算
-                    sel_uid = self.order[adid]['sel_uid']
-                    fanstop_num = self.order[adid]['fanstop_num']
-                    feifen_num = self.order[adid]['feifen_num']
-                    orientation_num = self.order[adid]['orientation_num']
-                    buy_type = self.cal_buy_type(fanstop_num, feifen_num, orientation_num, sel_uid)
+                if adid in self.order and self.order[adid]['buy_type'] == 0:  # 如果该广告id在order中，并且购买类型没有修改过，是0，则进行购买类型计算
+                    is_buy_fanstop = self.order[adid]['is_buy_fanstop']
+                    is_buy_feifen = self.order[adid]['is_buy_feifen']
+                    is_buy_orientation = self.order[adid]['is_buy_orientation']
+                    is_buy_sel_uid = self.order[adid]['is_buy_sel_uid']
+                    buy_type = self.cal_buy_type(is_buy_fanstop, is_buy_feifen, is_buy_orientation, is_buy_sel_uid)
+                    print("buy_type:" + adid, str(buy_type), is_buy_fanstop, is_buy_feifen, is_buy_orientation,
+                                is_buy_sel_uid)
                     self.order[adid]['buy_type'] = buy_type
 
-    def cal_buy_type(fanstop_num, feifen_num, orientation_num, sel_uid):
+    def cal_buy_type(self, is_buy_fanstop, is_buy_feifen, is_buy_orientation, is_buy_sel_uid):
         """
         根据从原始数据源中获取的订单数据，计算购买类型。
         用来后边计算购买建议
@@ -124,35 +136,35 @@ class OnlineOrderProcess(object):
         :return:
         """
         buy_type = 1
-        if fanstop_num > 0 and feifen_num == 0 and orientation_num == 0 and not sel_uid:
+        if is_buy_fanstop and not is_buy_feifen and not is_buy_orientation and not is_buy_sel_uid:
             buy_type = sc.bowen_toutiao_fanstop
-        elif fanstop_num == 0 and feifen_num > 0 and orientation_num == 0 and not sel_uid:
+        elif not is_buy_fanstop and is_buy_feifen and not is_buy_orientation and not is_buy_sel_uid:
             buy_type = sc.bowen_toutiao_feifen
-        elif fanstop_num == 0 and feifen_num == 0 and orientation_num > 0 and not sel_uid:
+        elif not is_buy_fanstop and not is_buy_feifen and is_buy_orientation and not is_buy_sel_uid:
             buy_type = sc.bowen_toutiao_orientation
-        elif fanstop_num == 0 and feifen_num == 0 and orientation_num == 0 and sel_uid:
+        elif not is_buy_fanstop and not is_buy_feifen and not is_buy_orientation and is_buy_sel_uid:
             buy_type = sc.bowen_toutiao_sel_uid
-        elif fanstop_num > 0 and feifen_num > 0 and orientation_num > 0 and sel_uid:
+        elif is_buy_fanstop and is_buy_feifen and is_buy_orientation and is_buy_sel_uid:
             buy_type = sc.bowen_toutiao_fanstop_feifen_orientation_sel_uid
-        elif fanstop_num > 0 and feifen_num > 0 and orientation_num == 0 and not sel_uid:
+        elif is_buy_fanstop and is_buy_feifen and not is_buy_orientation and not is_buy_sel_uid:
             buy_type = sc.bowen_toutiao_fanstop_feifen
-        elif fanstop_num > 0 and feifen_num == 0 and orientation_num > 0 and not sel_uid:
+        elif is_buy_fanstop and not is_buy_feifen and is_buy_orientation and not is_buy_sel_uid:
             buy_type = sc.bowen_toutiao_fanstop_orientation
-        elif fanstop_num > 0 and feifen_num == 0 and orientation_num == 0 and sel_uid:
+        elif is_buy_fanstop and not is_buy_feifen and not is_buy_orientation and is_buy_sel_uid:
             buy_type = sc.bowen_toutiao_fanstop_sel_uid
-        elif fanstop_num == 0 and feifen_num > 0 and orientation_num > 0 and not sel_uid:
+        elif not is_buy_fanstop and is_buy_feifen and is_buy_orientation and not is_buy_sel_uid:
             buy_type = sc.bowen_toutiao_feifen_orientation
-        elif fanstop_num == 0 and feifen_num > 0 and orientation_num == 0 and sel_uid:
+        elif not is_buy_fanstop and is_buy_feifen and not is_buy_orientation and is_buy_sel_uid:
             buy_type = sc.bowen_toutiao_feifen_sel_uid
-        elif fanstop_num == 0 and feifen_num == 0 and orientation_num > 0 and sel_uid:
+        elif not is_buy_fanstop and not is_buy_feifen and is_buy_orientation and is_buy_sel_uid:
             buy_type = sc.bowen_toutiao_orientation_sel_uid
-        elif fanstop_num > 0 and feifen_num > 0 and orientation_num > 0 and not sel_uid:
+        elif is_buy_fanstop and is_buy_feifen and is_buy_orientation and not is_buy_sel_uid:
             buy_type = sc.bowen_toutiao_fanstop_feifen_orientation
-        elif fanstop_num > 0 and feifen_num > 0 and orientation_num == 0 and sel_uid:
+        elif is_buy_fanstop and is_buy_feifen and not is_buy_orientation and is_buy_sel_uid:
             buy_type = sc.bowen_toutiao_fanstop_feifen_sel_uid
-        elif fanstop_num > 0 and feifen_num == 0 and orientation_num > 0 and sel_uid:
+        elif is_buy_fanstop and not is_buy_feifen and is_buy_orientation and is_buy_sel_uid:
             buy_type = sc.bowen_toutiao_fanstop_orientation_sel_uid
-        elif fanstop_num == 0 and feifen_num > 0 and orientation_num > 0 and sel_uid:
+        elif not is_buy_fanstop and is_buy_feifen and is_buy_orientation and is_buy_sel_uid:
             buy_type = sc.bowen_toutiao_feifen_orientation_sel_uid
         return buy_type
 
@@ -207,6 +219,8 @@ class OnlineOrderProcess(object):
         """
         # 读取即时订单
         self.load_order()
+        #计算购买类型
+        self.cal_order_buy_type()
         # 把线上的同步到目前的
         self.combine_data_from_order_to_record()
 

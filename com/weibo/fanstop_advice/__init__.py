@@ -3,10 +3,11 @@ __author__ = 'Zealot'
 
 import logging as logger
 
-logger.basicConfig(level=logger.DEBUG,
-                    format='%(asctime)s %(levelname)s %(filename)s[line:%(lineno)d] %(message)s'
-                    )
-# logger.info("123")
+class te(object):{
+    logger.basicConfig(level=logger.DEBUG,format='%(asctime)s %(levelname)s %(filename)s[line:%(lineno)d] %(message)s')
+
+}
+
 
 #
 # handler = logging.handlers.RotatingFileHandler(LOG_FILE, maxBytes = 1024*1024, backupCount = 5) # 实例化handler

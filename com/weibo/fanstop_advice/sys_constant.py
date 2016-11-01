@@ -41,7 +41,7 @@ bowen_toutiao_orientation_sel_uid = 11
 
 #粉条，非粉，兴趣
 bowen_toutiao_fanstop_feifen_orientation = 12
-#粉条，非粉指定账号
+#粉条，非粉，指定账号
 bowen_toutiao_fanstop_feifen_sel_uid = 13
 #粉条，兴趣，指定账号
 bowen_toutiao_fanstop_orientation_sel_uid = 14
