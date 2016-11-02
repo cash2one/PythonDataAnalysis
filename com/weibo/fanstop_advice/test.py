@@ -1,23 +1,12 @@
 __author__ = 'Zealot'
-import __init__.logger as i
+import __init__ as i
 import cPickle as ce
-i.info("123")
-dir_path = "/data0/yizhou/cmd/opt_suggestion/fanstop_advice"
-history_order_data = ce.load(open(dir_path + "/data/history_order_data.pkl", 'rb'))
+import sys
+reload(sys)
+sys.setdefaultencoding('utf8')
+i.logger.info("123")
+def main():
+    i.logger.info("123")
 
-map={}
-map[0]=1
-print map
-
-for (adid, value) in history_order_data.items():
-    if not adid.endswith('week'):
-        buy_type = value["buy_type"]
-        if buy_type in map.keys():
-            map[buy_type] = map[buy_type] + 1
-        else:
-            map[buy_type]=1
-
-print map
-#
-#
-# i.info(map)
+if __name__ == '__main__':
+    main()

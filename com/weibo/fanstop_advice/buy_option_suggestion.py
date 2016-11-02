@@ -5,6 +5,7 @@ import datetime
 import codecs
 import sys_constant as sc
 import sys
+import __init__ as ini
 reload(sys) 
 sys.setdefaultencoding('utf8')
 class Buy_Option(object):
@@ -108,11 +109,19 @@ class Buy_Option(object):
         feifen_ctr_week = self.order_data[video_flag+'_feifen_ctr_week']
         orientation_ctr_week = self.order_data[video_flag+'_orientation_ctr_week']
         sel_uid_ctr_week = self.order_data[video_flag+'_sel_uid_ctr_week']
+        ini.logger.info("======start====================================================")
         is_high = self.is_high_interact_rating(fanstop_ctr, feifen_ctr, orientation_ctr, sel_uid_ctr, fanstop_expo,
                                                feifen_expo, orientation_expo, sel_uid_expo, fanstop_ctr_week,
                                                feifen_ctr_week, orientation_ctr_week, sel_uid_ctr_week)
+        ini.logger.info(fanstop_ctr, feifen_ctr, orientation_ctr, sel_uid_ctr, fanstop_expo,
+                        feifen_expo, orientation_expo, sel_uid_expo, fanstop_ctr_week,
+                        feifen_ctr_week, orientation_ctr_week, sel_uid_ctr_week)
+
         suggestion = self.get_suggestion_info_by_condition(buy_type, is_high, feifen_expo, nofans_volume, interest_bag)
+        ini.logger.info("buy_type: " + buy_type, " suggestion: ", suggestion)
         self.buy_result[adid_mod][adid] = [interest_flag, suggestion, interest_bag, 1 if sc.bowen_toutiao_sel_uid == buy_type else 0]
+        ini.logger.info("======end======================================================")
+
 
     def is_high_interact_rating(self, fanstop_ctr, feifen_ctr, orientation_ctr, sel_uid_ctr, fanstop_expo, feifen_expo, orientation_expo,
                           sel_uid_expo, fanstop_ctr_week, feifen_ctr_week, orientation_ctr_week, sel_uid_ctr_week):
@@ -139,7 +148,7 @@ class Buy_Option(object):
         """
         sum_ctr_week = fanstop_ctr_week + feifen_ctr_week + orientation_ctr_week + sel_uid_ctr_week
         sum_expo = fanstop_expo + feifen_expo + orientation_expo + sel_uid_expo #曝光总数
-        w11, w12, w21, w22, w31, w32, w41, w42 = 0,0,0,0,0,0,0,0
+        w11, w12, w21, w22, w31, w32, w41, w42 = 0, 0, 0, 0, 0, 0, 0, 0
         if sum_expo and sum_ctr_week:
             w11 = float(fanstop_expo) / sum_expo
             w12 = float(fanstop_ctr_week) / sum_ctr_week
@@ -156,7 +165,9 @@ class Buy_Option(object):
         d = sel_uid_ctr * w41 * w42
         adid_rating = a + b + c + d
         sum_rating = fanstop_ctr_week * w11 * w12 + feifen_ctr_week * w21 * w22 + orientation_ctr_week * w31 * w32 + sel_uid_ctr_week * w41 * w42
-
+        # print "buy_option_suggestion.py:159 ",w11, w12, w21, w22, w31, w32, w41, w42
+        is_high = adid_rating > sum_rating
+        ini.logger.info(w11, w12, w21, w22, w31, w32, w41, w42, is_high)
         return adid_rating > sum_rating
 
     def get_suggestion_info_by_condition(self, buy_type, is_high, feifen_expo, feifen_maxnum, interest_bag):

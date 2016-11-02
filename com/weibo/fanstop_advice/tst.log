@@ -8,3 +8,13 @@
 2016-10-31 13:37:27,744 - __init__.py:20 - root - first info message
 2016-10-31 13:37:27,744 - __init__.py:21 - root - first debug message
 2016-10-31 13:37:27,744 - __init__.py:22 - root - 234
+2016-11-01 17:39:44,504 - __init__.py:24 - tst - first info message
+2016-11-01 17:39:44,504 - __init__.py:25 - tst - first debug message
+2016-11-01 17:40:14,775 - __init__.py:24 - tst - first info message
+2016-11-01 17:40:14,775 - __init__.py:25 - tst - first debug message
+2016-11-01 17:40:20,274 - __init__.py:24 - tst - first info message
+2016-11-01 17:40:20,275 - __init__.py:25 - tst - first debug message
+2016-11-01 17:40:45,279 - __init__.py:26 - tst - first info message
+2016-11-01 17:40:45,279 - __init__.py:27 - tst - first debug message
+2016-11-01 17:40:52,861 - __init__.py:26 - tst - first info message
+2016-11-01 17:40:52,861 - __init__.py:27 - tst - first debug message

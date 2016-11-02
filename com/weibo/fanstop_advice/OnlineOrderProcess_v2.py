@@ -1,11 +1,14 @@
-# encoding=utf-8
+# -*- coding: utf-8 -*-
+
 import os, sys, shutil
 import datetime
 import json
 import re
 import cPickle as ce
 import sys_constant as sc
-import logging as logger
+import __init__ as ini
+reload(sys)
+sys.setdefaultencoding('utf8')
 # ############
 # using for  check order up/down
 # 处理订单，转换成需要的格式
@@ -14,7 +17,6 @@ import logging as logger
 
 class OnlineOrderProcess(object):
     """docstring for OnlineOrderPrecess"""
-    logger.basicConfig(level=logger.DEBUG, format='%(asctime)s %(levelname)s %(filename)s[line:%(lineno)d] %(message)s')
 
     def __init__(self, fpath_order, fpath_out):
         super(OnlineOrderProcess, self).__init__()
@@ -121,18 +123,17 @@ class OnlineOrderProcess(object):
                     is_buy_orientation = self.order[adid]['is_buy_orientation']
                     is_buy_sel_uid = self.order[adid]['is_buy_sel_uid']
                     buy_type = self.cal_buy_type(is_buy_fanstop, is_buy_feifen, is_buy_orientation, is_buy_sel_uid)
-                    print("buy_type:" + adid, str(buy_type), is_buy_fanstop, is_buy_feifen, is_buy_orientation,
-                                is_buy_sel_uid)
+                    # print("buy_type:" + adid, str(buy_type), is_buy_fanstop, is_buy_feifen, is_buy_orientation, is_buy_sel_uid)
                     self.order[adid]['buy_type'] = buy_type
 
     def cal_buy_type(self, is_buy_fanstop, is_buy_feifen, is_buy_orientation, is_buy_sel_uid):
         """
         根据从原始数据源中获取的订单数据，计算购买类型。
         用来后边计算购买建议
-        :param fanstop_num:
-        :param feifen_num:
-        :param orientation_num:
-        :param sel_uid:
+        :param is_buy_fanstop:
+        :param is_buy_feifen:
+        :param is_buy_orientation:
+        :param is_buy_sel_uid:
         :return:
         """
         buy_type = 1
@@ -294,7 +295,9 @@ if __name__ == '__main__':
         print "parameters ERRO: <adid_path><fpath_out>"
         sys.exit(1)
     myOnlineOrder = OnlineOrderProcess(sys.argv[1], sys.argv[2])
+    ini.logger.warning("begin...")
+    ini.logger.info("begin...")
     # order_data = myOnlineOrder.OrderData()
     order_data_latest = myOnlineOrder.order_data()
-    print len(order_data_latest)
+    ini.logger.info(len(order_data_latest))
 #myOnlineOrder.LoadData()

@@ -30,7 +30,7 @@ time_now=`date`
 echo "RUNNING END TIME: $time_now"
 
 #save order.txt
-python $MAIN_PATH/script/order_data_out.py
+python $MAIN_PATH/script/order_data_out.py $MAIN_PATH
 
 minus=`date +"%M"`
 hour=`date +"%H"`

@@ -2,8 +2,9 @@
 import os, shutil
 import cPickle as ce
 import json
-import sys
 import redis
+import sys
+import __init__ as ini
 from upfans_suggestion import *
 from bowen_suggestion import *
 from recmd_bags import *
@@ -11,16 +12,6 @@ from buy_option_suggestion import *
 
 reload(sys)
 sys.setdefaultencoding('utf8')
-
-# class OptSuggestion(object):
-# """docstring for OptSuggestion"""
-# 	def __init__(self, dir_path):
-# 		super(OptSuggestion, self).__init__()
-# 		self.dir_path = dir_path
-# 		self.order_data = {}
-# 		self.history_order_data = {}
-# 		self.inter_data = {}
-# 		self.
 
 
 def HistoryOrderDataSel(dir_path, history_order_data):
@@ -101,13 +92,9 @@ def InteractData(order_data):#获取互动，曝光
             except Exception:
                 inter_data[adid] = [r_back.hgetall(adid + '_interact_advice_nums'),
                                     r_back.hgetall(adid + '_expo_user_profile')]
-            #print r.hgetall(adid+'_interact_advice_nums'),r_expo.hgetall(adid+'_expo_user_profile')
         except Exception:
             raise RuntimeError("InteractData Error")
-        #print "InteractData Error"
     print len(inter_data)
-    #print inter_data
-    #sys.exit(1)
     return inter_data
 
 
@@ -119,7 +106,6 @@ def CtrData(order_data, bowen_result, inter_data, history_order_data):
     for (adid, value) in order_data.items():
         if adid.endswith('week'):
             continue
-        #print adid,value
         adid_mod = int(adid) % adid_mod_num
         order_data[adid]['orientation_ctr'] = 0.0
         order_data[adid]['feifen_ctr'] = 0.0
@@ -150,21 +136,15 @@ def CtrData(order_data, bowen_result, inter_data, history_order_data):
                     order_data[adid]["feifen_expo"] = int(inter_data[adid][1]["extendfans"])
                     order_data[adid]['feifen_ctr'] = float(ctr_num) / int(inter_data[adid][1]["extendfans"]) if int(
                         inter_data[adid][1]["extendfans"]) != 0 else 0
-                #print 'extendfans:', ctr_num,inter_data[adid][1]["extendfans"],order_data[adid]['feifen_ctr']
             if order_data[adid]['orientation_num'] != 0:
                 ctr_num = 0
-                #print 'inter_data:',inter_data[adid]
                 for act_code in inter_code:
-                    #print 'fields_'+act_code,inter_data[adid][0].keys(),'fields_'+act_code in inter_data[adid][0].keys()
                     if 'fields_' + act_code in inter_data[adid][0].keys():
-                        # if adid == '16081405019052998348':
-                        #     print 'ctr_num:', inter_data[adid][0]['field_' + act_code]
                         ctr_num += int(inter_data[adid][0]['fields_' + act_code])
                 if "fieldfans" in inter_data[adid][1].keys():
                     order_data[adid]["orientation_expo"] = int(inter_data[adid][1]['fieldfans'])
                     order_data[adid]['orientation_ctr'] = float(ctr_num) / int(inter_data[adid][1]['fieldfans']) if int(
                         inter_data[adid][1]['fieldfans']) != 0 else 0
-                #print 'field:',adid, ctr_num,inter_data[adid][1]['fieldfans'],order_data[adid]['orientation_ctr']
             if order_data[adid]['fanstop_num'] != 0:
                 ctr_num = 0
                 #print inter_data[adid]
@@ -175,7 +155,6 @@ def CtrData(order_data, bowen_result, inter_data, history_order_data):
                     order_data[adid]["fanstop_expo"] = int(inter_data[adid][1]['fanstop'])
                     order_data[adid]['fanstop_ctr'] = float(ctr_num) / int(inter_data[adid][1]['fanstop']) if int(
                         inter_data[adid][1]['fanstop']) != 0 else 0
-                #print 'fans_top_ctr:',ctr_num,inter_data[adid][1]['fanstop'],order_data[adid]['fanstop_ctr']
             if order_data[adid]['sel_uid']:#sel_uid为order_data中的名字，字典数据。
                 """
                 新加指定账号数据
@@ -188,20 +167,16 @@ def CtrData(order_data, bowen_result, inter_data, history_order_data):
                     order_data[adid]["sel_uid_expo"] = int(inter_data[adid][1]['desdfans'])
                     order_data[adid]['sel_uid_ctr'] = float(ctr_num) / int(inter_data[adid][1]['desdfans']) if int(
                         inter_data[adid][1]['desdfans']) != 0 else 0
+            ini.logger.info(order_data[adid])
 
-        #defualt value 0: no video  1:have
         order_data[adid]['bowen_test_flag'] = 0
-        #print 'video_flag:',adid,bowen_result,order_data[adid]['video_flag']
         if order_data[adid]['video_flag'] == 1:
-            #print 'video_flag:',order_data[adid]['video_flag']
             order_data[adid]['bowen_test_flag'] = 1
             order_data[adid]['video_flag'] == 1
         elif adid_mod in bowen_result.keys() and adid in bowen_result[adid_mod].keys():
             order_data[adid]['video_flag'] = int(bowen_result[adid_mod][adid][1])
             if int(bowen_result[adid_mod][adid][0]) == 1 or int(bowen_result[adid_mod][adid][1]) == 1:
                 order_data[adid]['bowen_test_flag'] = 1
-            #print 'bowen_test_flag:',order_data[adid]['bowen_test_flag']
-            #print 'video_flag:',adid,order_data[adid]['video_flag']
     time_flag = str((datetime.datetime.now() + datetime.timedelta(hours=-24)))
     #save no update data
     for adid in order_data.keys():
@@ -210,13 +185,11 @@ def CtrData(order_data, bowen_result, inter_data, history_order_data):
         if order_data[adid]['time'] < time_flag:
             history_order_data[adid] = order_data[adid]
             del order_data[adid]
-    #print "ctr:",order_data
     return order_data, history_order_data
 
 
 def OutData(output_path, order_data, bowen_result, upfans_result, buy_result):
     update_data = {}
-    #print output_path
     adid_mod_num = 100
     fw_test = open(output_path + "_check", 'w')
     with open(output_path, 'w') as fw:
@@ -273,7 +246,7 @@ def combine_data(fpath_1, fpath_2, update_data):
 
 
 def main(dir_path):
-    print datetime.datetime.now(), dir_path + "/data/order_data.txt"
+    ini.logger.info(dir_path + "/data/order_data.txt")
     order_data, history_order_data = LoadOrder(dir_path)#！！！计算指定账号的7天平均CTR
     print datetime.datetime.now(), " load data finsh: order_data num is ", len(
         order_data), "history_order_data num is ", len(history_order_data)
@@ -286,7 +259,7 @@ def main(dir_path):
     bowen_result = myBoWen.order_data_process()#博文质量检测
     print datetime.datetime.now(), " bowen process finish: bowen_result num is ", len(bowen_result)
 
-    order_data, history_order_data = CtrData(order_data, bowen_result, inter_data, history_order_data)#24小时CTR
+    order_data, history_order_data = CtrData(order_data, bowen_result, inter_data, history_order_data)#24小时CTR!!!
     ce.dump(order_data, open(dir_path + '/data/order_data.pkl', 'wb'))
     print datetime.datetime.now(), " ctr caculate finish: CtrData order_data num is ", len(
         order_data), "CtrData history_order_data num is ", len(history_order_data)
