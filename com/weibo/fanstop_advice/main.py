@@ -92,6 +92,7 @@ def InteractData(order_data):#获取互动，曝光
             except Exception:
                 inter_data[adid] = [r_back.hgetall(adid + '_interact_advice_nums'),
                                     r_back.hgetall(adid + '_expo_user_profile')]
+            # ini.logger.info(inter_data[adid])
         except Exception:
             raise RuntimeError("InteractData Error")
     print len(inter_data)
@@ -167,7 +168,7 @@ def CtrData(order_data, bowen_result, inter_data, history_order_data):
                     order_data[adid]["sel_uid_expo"] = int(inter_data[adid][1]['desdfans'])
                     order_data[adid]['sel_uid_ctr'] = float(ctr_num) / int(inter_data[adid][1]['desdfans']) if int(
                         inter_data[adid][1]['desdfans']) != 0 else 0
-            ini.logger.info(order_data[adid])
+            # ini.logger.info(order_data[adid])
 
         order_data[adid]['bowen_test_flag'] = 0
         if order_data[adid]['video_flag'] == 1:
@@ -246,23 +247,21 @@ def combine_data(fpath_1, fpath_2, update_data):
 
 
 def main(dir_path):
-    ini.logger.info(dir_path + "/data/order_data.txt")
+    ini.logger.info(dir_path + "/data/order_data.pkl")
     order_data, history_order_data = LoadOrder(dir_path)#！！！计算指定账号的7天平均CTR
-    print datetime.datetime.now(), " load data finsh: order_data num is ", len(
-        order_data), "history_order_data num is ", len(history_order_data)
+    ini.logger.info(["load data finsh: order_data num is ", len(order_data), "history_order_data num is ", len(history_order_data)])
 
     inter_data = InteractData(order_data)#获取互动数据
-    print datetime.datetime.now(), " inter_data finsh: inter_data num is ", len(inter_data)
+    ini.logger.info([" inter_data finsh: inter_data num is ", len(inter_data)])
 
     #the dir_path use for storage mid content
     myBoWen = BowenSuggestion(dir_path, order_data)
     bowen_result = myBoWen.order_data_process()#博文质量检测
-    print datetime.datetime.now(), " bowen process finish: bowen_result num is ", len(bowen_result)
+    ini.logger.info([" bowen process finish: bowen_result num is ", len(bowen_result)])
 
     order_data, history_order_data = CtrData(order_data, bowen_result, inter_data, history_order_data)#24小时CTR!!!
     ce.dump(order_data, open(dir_path + '/data/order_data.pkl', 'wb'))
-    print datetime.datetime.now(), " ctr caculate finish: CtrData order_data num is ", len(
-        order_data), "CtrData history_order_data num is ", len(history_order_data)
+    ini.logger.info([" ctr caculate finish: CtrData order_data num is ", len(order_data), "CtrData history_order_data num is ", len(history_order_data)])
 
     #split_words:mid_content
     #该部分若没有分词，则先将订单中的博文进行词后防置在 data文件夹下，名字为online_words.txt
@@ -274,25 +273,26 @@ def main(dir_path):
     except:
         print "words_seg erro,please input words by manu"
 
-    print datetime.datetime.now(), " finish words segment"
+    ini.logger.info("finish words segment")
     myBagProb = BagProb(dir_path, order_data) #定向包预测
     bags_recmd_result = myBagProb.Bag_Recmd()
-    print datetime.datetime.now(), " BagProb finish: bags_recmd_result num is ", len(bags_recmd_result)
+    ini.logger.info(["BagProb finish: bags_recmd_result num is ", len(bags_recmd_result)])
 
     myupfans = Upfans_Suggestion(dir_path, order_data)
     upfans_result = myupfans.suggestion_result() #涨粉建议
-    print datetime.datetime.now(), " upfans suggestion finish: upfans_result num is ", len(upfans_result)
+    ini.logger.info(["upfans suggestion finish: upfans_result num is ", len(upfans_result)])
 
     mybuy_result = Buy_Option(dir_path, order_data, bags_recmd_result, bowen_result)#购买建议！！！！
     buy_result = mybuy_result.buy_suggestion()
-    print datetime.datetime.now(), " buy option finish: buy_result num is ", sum([len(i) for i in buy_result.values()])
+    # print datetime.datetime.now(), " buy option finish: buy_result num is ", sum([len(i) for i in buy_result.values()])
+    ini.logger.info([" buy option finish: buy_result num is ", sum([len(i) for i in buy_result.values()])])
     if os.path.isdir(dir_path + "/data/out_data/"):
         pass
     else:
         os.mkdir(dir_path + "/data/out_data/")
     output_path = dir_path + '/data/out_data/update_data'#当次计算结果
     update_data = OutData(output_path, order_data, bowen_result, upfans_result, buy_result)
-    print datetime.datetime.now(), " out data finish"
+    ini.logger.info("out data finish")
     #new_data use for select order  stop update  combine to old data
     new_data_path = dir_path + '/data/out_data/new_data'#上次（半小时前）的计算结果
     if os.path.isfile(dir_path + "/data/out_data/new_data"):
@@ -307,7 +307,7 @@ def main(dir_path):
     if os.path.isfile(new_data_path) and os.path.isfile(no_update_data_path):
         combine_data(no_update_data_path, new_data_path, update_data)
     history_order_data = HistoryOrderDataSel(dir_path, history_order_data)
-    print datetime.datetime.now(), " finish all"
+    ini.logger.info("finish all")
 
 
 if __name__ == '__main__':

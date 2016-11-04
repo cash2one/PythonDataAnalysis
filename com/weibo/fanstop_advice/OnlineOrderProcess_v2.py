@@ -56,7 +56,7 @@ class OnlineOrderProcess(object):
                         self.order[adid]['buy_type'] = 1
                     self.order[adid]['feifen_num'] = int(buy_num)
                     if max_buy_num == 'NULL':
-                        print line
+                        ini.logger.info(line)
                     else:
                         self.order[adid]['feifen_maxnum'] = int(max_buy_num)
 
@@ -93,14 +93,14 @@ class OnlineOrderProcess(object):
                     self.order[adid]['is_buy_sel_uid'] = True
                 #粉条
                 elif buy_type == sc.adid_dataprod_buy_type_fanstop:
-                    self.order[adid]['fanstop_num'] = int(buy_num)
+                    self.order[adid]['fanstop_num'] = 1
                     self.order[adid]['is_buy_fanstop'] = True
                 #非粉
                 elif buy_type == sc.adid_dataprod_buy_type_fei_fen:
                     self.order[adid]['feifen_num'] = int(buy_num)
                     self.order[adid]['is_buy_feifen'] = True
                     if max_buy_num == 'NULL':
-                        print line
+                        ini.logger.info(line)
                     else:
                         self.order[adid]['feifen_maxnum'] = int(max_buy_num)
                 #定向包
@@ -123,7 +123,6 @@ class OnlineOrderProcess(object):
                     is_buy_orientation = self.order[adid]['is_buy_orientation']
                     is_buy_sel_uid = self.order[adid]['is_buy_sel_uid']
                     buy_type = self.cal_buy_type(is_buy_fanstop, is_buy_feifen, is_buy_orientation, is_buy_sel_uid)
-                    # print("buy_type:" + adid, str(buy_type), is_buy_fanstop, is_buy_feifen, is_buy_orientation, is_buy_sel_uid)
                     self.order[adid]['buy_type'] = buy_type
 
     def cal_buy_type(self, is_buy_fanstop, is_buy_feifen, is_buy_orientation, is_buy_sel_uid):
@@ -215,7 +214,7 @@ class OnlineOrderProcess(object):
 
     def order_data(self):
         """
-        读取即时订单,把线上的同步到目前的
+        读取即时订单,计算即时订单的购买类型，同步到当前的订单数据中
         :return:
         """
         # 读取即时订单
@@ -295,7 +294,6 @@ if __name__ == '__main__':
         print "parameters ERRO: <adid_path><fpath_out>"
         sys.exit(1)
     myOnlineOrder = OnlineOrderProcess(sys.argv[1], sys.argv[2])
-    ini.logger.warning("begin...")
     ini.logger.info("begin...")
     # order_data = myOnlineOrder.OrderData()
     order_data_latest = myOnlineOrder.order_data()

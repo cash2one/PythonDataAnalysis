@@ -8,6 +8,8 @@ import sys
 import __init__ as ini
 reload(sys) 
 sys.setdefaultencoding('utf8')
+
+
 class Buy_Option(object):
     """docstring for Buy_Option"""
     def __init__(self, dir_path,order_data,recmd_bags,bowen_result):
@@ -24,7 +26,7 @@ class Buy_Option(object):
     def buy_option(self,adid,adid_mod,values,nofans_volume,interest_bag,video_flag):
         #print values.keys()
         #print interest_bag
-        #print values         
+        #print values
         flag = values['buy_type']
         if len(interest_bag)>0:
             tmpstr = self.bag_name_dic[interest_bag[0][0]]
@@ -108,19 +110,24 @@ class Buy_Option(object):
         fanstop_ctr_week = self.order_data[video_flag+'_fanstop_ctr_week']
         feifen_ctr_week = self.order_data[video_flag+'_feifen_ctr_week']
         orientation_ctr_week = self.order_data[video_flag+'_orientation_ctr_week']
-        sel_uid_ctr_week = self.order_data[video_flag+'_sel_uid_ctr_week']
-        ini.logger.info("======start====================================================")
+
+        if video_flag+'_sel_uid_ctr_week' in self.order_data:
+            sel_uid_ctr_week = self.order_data[video_flag+'_sel_uid_ctr_week']
+        else:
+            sel_uid_ctr_week = 0.01 if video_flag == 1 else 0.001
+            # ini.logger.info("default param: " + str(sel_uid_ctr_week))
+
+
+        # ini.logger.info("======start====================================================")
         is_high = self.is_high_interact_rating(fanstop_ctr, feifen_ctr, orientation_ctr, sel_uid_ctr, fanstop_expo,
                                                feifen_expo, orientation_expo, sel_uid_expo, fanstop_ctr_week,
                                                feifen_ctr_week, orientation_ctr_week, sel_uid_ctr_week)
-        ini.logger.info(fanstop_ctr, feifen_ctr, orientation_ctr, sel_uid_ctr, fanstop_expo,
-                        feifen_expo, orientation_expo, sel_uid_expo, fanstop_ctr_week,
-                        feifen_ctr_week, orientation_ctr_week, sel_uid_ctr_week)
+        # ini.logger.info([fanstop_ctr, feifen_ctr, orientation_ctr, sel_uid_ctr, fanstop_expo,feifen_expo, orientation_expo, sel_uid_expo, fanstop_ctr_week,feifen_ctr_week, orientation_ctr_week, sel_uid_ctr_week])
 
         suggestion = self.get_suggestion_info_by_condition(buy_type, is_high, feifen_expo, nofans_volume, interest_bag)
-        ini.logger.info("buy_type: " + buy_type, " suggestion: ", suggestion)
+        # ini.logger.info([adid, "buy_type: " + str(buy_type), " suggestion: " + suggestion])
         self.buy_result[adid_mod][adid] = [interest_flag, suggestion, interest_bag, 1 if sc.bowen_toutiao_sel_uid == buy_type else 0]
-        ini.logger.info("======end======================================================")
+        # ini.logger.info("======end======================================================")
 
 
     def is_high_interact_rating(self, fanstop_ctr, feifen_ctr, orientation_ctr, sel_uid_ctr, fanstop_expo, feifen_expo, orientation_expo,
@@ -148,7 +155,7 @@ class Buy_Option(object):
         """
         sum_ctr_week = fanstop_ctr_week + feifen_ctr_week + orientation_ctr_week + sel_uid_ctr_week
         sum_expo = fanstop_expo + feifen_expo + orientation_expo + sel_uid_expo #曝光总数
-        w11, w12, w21, w22, w31, w32, w41, w42 = 0, 0, 0, 0, 0, 0, 0, 0
+        w11, w12, w21, w22, w31, w32, w41, w42 = 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
         if sum_expo and sum_ctr_week:
             w11 = float(fanstop_expo) / sum_expo
             w12 = float(fanstop_ctr_week) / sum_ctr_week
@@ -164,19 +171,20 @@ class Buy_Option(object):
         c = orientation_ctr * w31 * w32
         d = sel_uid_ctr * w41 * w42
         adid_rating = a + b + c + d
-        sum_rating = fanstop_ctr_week * w11 * w12 + feifen_ctr_week * w21 * w22 + orientation_ctr_week * w31 * w32 + sel_uid_ctr_week * w41 * w42
+        #根据一周的ctr，与当前adid的系数，计算互动率
+        sum_week_rating = fanstop_ctr_week * w11 * w12 + feifen_ctr_week * w21 * w22 + orientation_ctr_week * w31 * w32 + sel_uid_ctr_week * w41 * w42
         # print "buy_option_suggestion.py:159 ",w11, w12, w21, w22, w31, w32, w41, w42
-        is_high = adid_rating > sum_rating
-        ini.logger.info(w11, w12, w21, w22, w31, w32, w41, w42, is_high)
-        return adid_rating > sum_rating
+        is_high = adid_rating > sum_week_rating
+        # ini.logger.info([w11, w12, w21, w22, w31, w32, w41, w42, is_high])
+        return adid_rating > sum_week_rating
 
     def get_suggestion_info_by_condition(self, buy_type, is_high, feifen_expo, feifen_maxnum, interest_bag):
         res = "本次推广还有不少优化空间，试试投给潜在粉丝、指定账号相似粉丝、兴趣用户和更多粉丝吧！"
         if not feifen_maxnum:
-            return res
+            return u''+res
         feifen_ratio = float(feifen_expo) / feifen_maxnum
         feifen_threshold = 0.3
-        buy_type=int(buy_type)
+        buy_type = int(buy_type)
         if buy_type == sc.bowen_toutiao_fanstop:
             res = "推广效果很赞，试试投给潜在粉丝、指定账号相似粉丝、兴趣用户和更多粉丝，获取更多曝光和互动吧！" if is_high else "本次推广还有不少优化空间，试试投给潜在粉丝、指定账号相似粉丝、兴趣用户和更多粉丝吧！"
         elif buy_type == sc.bowen_toutiao_feifen:
@@ -249,9 +257,13 @@ class Buy_Option(object):
                 res = "本次推广还有不少优化空间，试试投给粉丝和其它兴趣用户、指定账号相似粉丝吧！"
         else:
             res = "本次推广还有不少优化空间，试试投给潜在粉丝、指定账号相似粉丝、兴趣用户和更多粉丝吧！"
-        res = res.replace("兴趣", "对" + interest_bag + "感兴趣的") if interest_bag else res #如果有兴趣包推荐，则添加兴趣包
-        # res = unicode(res, "utf-8")
+
+        #如果有兴趣包推荐，则添加兴趣包
+        if len(interest_bag) > 0:
+            interest_content = self.bag_name_dic[interest_bag[0][0]]
+            res = res.replace("兴趣", "对" + interest_content + "感兴趣的")
         res = u''+res
+
         return res
 
     def bag_volume(self):
@@ -286,7 +298,7 @@ class Buy_Option(object):
         return tmp
 
     def buy_suggestion(self):
-        print 'buy_suggestion begin: order num is ',len(self.order_data)
+        ini.logger.info(['buy_suggestion begin: order num is ', len(self.order_data)])
         self.bag_name()
         adid_mod_num = 100
         for (adid,values) in self.order_data.items():
@@ -304,9 +316,9 @@ class Buy_Option(object):
                 self.buy_option_v2(adid,adid_mod,values,nofans_volume,interest_bag,'1')
             else:
                 self.buy_option_v2(adid,adid_mod,values,nofans_volume,interest_bag,'0')
-        print 'buy_suggestion end: result num is ',len(self.buy_result)
-        #ce.dump(self.buy_result,open('../data/buy_suggestion.pkl','wb'))
-        print sum([len(i) for i in self.buy_result.values()])
+        ini.logger.info(['buy_suggestion end: result num is ',len(self.buy_result)])
+        # print sum([len(i) for i in self.buy_result.values()])
+        ini.logger.info([sum([len(i) for i in self.buy_result.values()])])
         return self.buy_result
 
 if __name__ == '__main__':

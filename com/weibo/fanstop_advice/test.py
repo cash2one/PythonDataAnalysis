@@ -7,6 +7,9 @@ sys.setdefaultencoding('utf8')
 i.logger.info("123")
 def main():
     i.logger.info("123")
+    a=1
+    b=True
+    i.logger.info(["123",a,b])
 
 if __name__ == '__main__':
     main()
