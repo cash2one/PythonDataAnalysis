@@ -6,7 +6,7 @@ import json
 import re
 import cPickle as ce
 import sys_constant as sc
-import __init__ as ini
+import utils as util
 reload(sys)
 sys.setdefaultencoding('utf8')
 # ############
@@ -56,7 +56,7 @@ class OnlineOrderProcess(object):
                         self.order[adid]['buy_type'] = 1
                     self.order[adid]['feifen_num'] = int(buy_num)
                     if max_buy_num == 'NULL':
-                        ini.logger.info(line)
+                        util.logger.info(line)
                     else:
                         self.order[adid]['feifen_maxnum'] = int(max_buy_num)
 
@@ -72,6 +72,8 @@ class OnlineOrderProcess(object):
     def load_order(self):
         with open(self.fpath_order, 'r') as fr:
             for line in fr:
+                # if len(line.strip().split())<7:
+                #     util.logger.info(['data is wrong',line])
                 adid, ad_uid, mid, time_f, buy_type, buy_num, max_buy_num = line.strip().split()
                 if adid not in self.order.keys():  # order中的adid初始化
                     self.order[adid] = {'mid': mid}
@@ -100,7 +102,7 @@ class OnlineOrderProcess(object):
                     self.order[adid]['feifen_num'] = int(buy_num)
                     self.order[adid]['is_buy_feifen'] = True
                     if max_buy_num == 'NULL':
-                        ini.logger.info(line)
+                        util.logger.info(line)
                     else:
                         self.order[adid]['feifen_maxnum'] = int(max_buy_num)
                 #定向包
@@ -241,7 +243,7 @@ class OnlineOrderProcess(object):
         else:
             self.order_record = {}
 
-        time_flag = str((datetime.datetime.now() + datetime.timedelta(hours=-20)))
+        time_flag = str((datetime.datetime.now() + datetime.timedelta(hours=-72)))
         #合并即时订单与有效订单
         for adid in self.order.keys():
             if adid not in self.order_record.keys() and isinstance(adid, basestring):
@@ -294,8 +296,8 @@ if __name__ == '__main__':
         print "parameters ERRO: <adid_path><fpath_out>"
         sys.exit(1)
     myOnlineOrder = OnlineOrderProcess(sys.argv[1], sys.argv[2])
-    ini.logger.info("begin...")
+    util.logger.info("begin...")
     # order_data = myOnlineOrder.OrderData()
     order_data_latest = myOnlineOrder.order_data()
-    ini.logger.info(len(order_data_latest))
+    util.logger.info(len(order_data_latest))
 #myOnlineOrder.LoadData()

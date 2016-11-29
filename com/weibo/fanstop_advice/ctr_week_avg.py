@@ -3,7 +3,7 @@ import cPickle as ce
 import os
 import sys
 import datetime
-import __init__ as ini
+import utils as util
 
 
 def ctr_week_avg(dir_path):
@@ -41,7 +41,7 @@ def ctr_week_avg(dir_path):
         # history_order_back[adid] = values
         for way in item_list:
             if "video_flag" not in values.keys():
-                ini.logger.info([adid, values])
+                util.logger.info([adid, values])
                 continue
             if way + expo_flag not in values.keys():
                 expo_num += 1
@@ -50,8 +50,8 @@ def ctr_week_avg(dir_path):
             if way + '_ctr' in values:
                 buy_type_ctr = values[way + '_ctr']
             else:
-                ini.logger.info(["no buy type: ", way + '_ctr', str(adid)])
-                ini.logger.info([way, buy_type_ctr, values])
+                util.logger.info(["no buy type: ", way + '_ctr', str(adid)])
+                # util.logger.info([way, buy_type_ctr, values])
                 buy_type_ctr = 0.0
 
             # if buy_type_ctr != 0:
@@ -70,8 +70,8 @@ def ctr_week_avg(dir_path):
     for way in item_list:
         ctr_data['0_' + way + '_ctr_week'] = float(tmp_static['0' + way + '_interact']) / tmp_static['0' + way + '_num'] if tmp_static['0' + way + '_num'] != 0 else 0
         ctr_data['1_' + way + '_ctr_week'] = float(tmp_static['1' + way + '_interact']) / tmp_static['1' + way + '_num'] if tmp_static['1' + way + '_num'] != 0 else 0
-        ini.logger.info(['0_' + way + '_ctr_week:', tmp_static['0' + way + '_interact'], tmp_static['0' + way + '_num'], ctr_data['0_' + way + '_ctr_week']])
-        ini.logger.info(['1_' + way + '_ctr_week:', tmp_static['1' + way + '_interact'], tmp_static['1' + way + '_num'], ctr_data['1_' + way + '_ctr_week']])
+        util.logger.info(['0_' + way + '_ctr_week:', tmp_static['0' + way + '_interact'], tmp_static['0' + way + '_num'], ctr_data['0_' + way + '_ctr_week']])
+        util.logger.info(['1_' + way + '_ctr_week:', tmp_static['1' + way + '_interact'], tmp_static['1' + way + '_num'], ctr_data['1_' + way + '_ctr_week']])
     print 'tmp_static:', tmp_static
     print 'ctr_data:', ctr_data
     print 'sta_num:', sta_num
@@ -100,12 +100,12 @@ def ctr_week_avg(dir_path):
                 ctr_week_out[k + '_week'] = tmp_tuple[i][0]
                 break
             else:
-                ini.logger.info([k, split_num, int(sta_num[k[:-3] + 'num']) * 0.75])
+                util.logger.info([k, split_num, int(sta_num[k[:-3] + 'num']) * 0.75])
             split_num += int(tmp_tuple[i][1])
         # ini.logger.info([split_num, int(sta_num[k[:-3] + 'num']) * 0.75])
     history_ctr_week = {}
     update_flag = 1
-    ini.logger.info(["ctr_week_out:", ctr_week_out])
+    util.logger.info(["ctr_week_out:", ctr_week_out])
     with open(dir_path + '/data/ctr_week_avg.txt', 'r') as fr:
         for line in fr:
             take = line.strip().split('\t')

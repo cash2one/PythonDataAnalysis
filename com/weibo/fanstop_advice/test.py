@@ -1,15 +1,15 @@
 __author__ = 'Zealot'
-import __init__ as i
+import utils as util
 import cPickle as ce
 import sys
 reload(sys)
 sys.setdefaultencoding('utf8')
-i.logger.info("123")
+util.logger.info("123")
 def main():
-    i.logger.info("123")
+    util.logger.info("123")
     a=1
     b=True
-    i.logger.info(["123",a,b])
+    util.logger.info(["123",a,b])
 
 if __name__ == '__main__':
     main()

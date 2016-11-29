@@ -5,7 +5,7 @@ import datetime
 import codecs
 import sys_constant as sc
 import sys
-import __init__ as ini
+import utils as util
 reload(sys) 
 sys.setdefaultencoding('utf8')
 
@@ -293,12 +293,12 @@ class Buy_Option(object):
                         print self.recmd_bags[adid]
                         raise RuntimeError('check_recmd_bags error')
                     num_flag += 1
-                    if 3 == num_flag:
-                        break
+                    # if 3 == num_flag:
+                    #     break
         return tmp
 
     def buy_suggestion(self):
-        ini.logger.info(['buy_suggestion begin: order num is ', len(self.order_data)])
+        util.logger.info(['buy_suggestion begin: order num is ', len(self.order_data)])
         self.bag_name()
         adid_mod_num = 100
         for (adid,values) in self.order_data.items():
@@ -316,9 +316,9 @@ class Buy_Option(object):
                 self.buy_option_v2(adid,adid_mod,values,nofans_volume,interest_bag,'1')
             else:
                 self.buy_option_v2(adid,adid_mod,values,nofans_volume,interest_bag,'0')
-        ini.logger.info(['buy_suggestion end: result num is ',len(self.buy_result)])
+        util.logger.info(['buy_suggestion end: result num is ',len(self.buy_result)])
         # print sum([len(i) for i in self.buy_result.values()])
-        ini.logger.info([sum([len(i) for i in self.buy_result.values()])])
+        util.logger.info([sum([len(i) for i in self.buy_result.values()])])
         return self.buy_result
 
 if __name__ == '__main__':

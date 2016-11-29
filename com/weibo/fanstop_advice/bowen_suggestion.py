@@ -99,7 +99,7 @@ class BowenSuggestion(object):
                 mid = v['mid']
                 k_mod = int(k) % key_mod_num
                 mid_mod = int(mid) % mid_mod_num
-                if k_mod not in bowen_result.items():
+                if k_mod not in bowen_result.keys():
                     bowen_result[k_mod] = {}
                 if mid_mod in mid_record_dic.keys() and mid in mid_record_dic[mid_mod].keys():
                     bowen_result[k_mod][k] = mid_record_dic[mid_mod][mid][0:2]
