@@ -7,7 +7,7 @@ MAIN_PATH=`pwd`
 echo $MAIN_PATH
 
 
-time_now=`date`
+time_now=`date "+%G-%m-%d %H:%M:%S"`
 echo "RUNNING START TIME: $time_now"
 
 python   $MAIN_PATH/script/main.py $MAIN_PATH #/data0/fans_economy/headline/chenwei9/fanstop_advice/
@@ -26,7 +26,7 @@ python $MAIN_PATH/script/remove_repeat.py  #删除重复订单数据，当什么
 #rsync $MAIN_PATH/data/out_data/candidate_data  /data0/fans_economy/headline/chenwei9 #在这个文件夹下，
 rsync $MAIN_PATH/data/out_data/candidate_data_yizhou  /data0/fans_economy/headline/chenwei9 #在这个文件夹下，
 
-time_now=`date`
+time_now=`date "+%G-%m-%d %H:%M:%S"`
 echo "RUNNING END TIME: $time_now"
 
 #save order.txt

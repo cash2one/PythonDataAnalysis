@@ -4,6 +4,7 @@ import cPickle
 import commands
 import MySQLdb
 import datetime
+import utils as util
 
 
 class Upfans_Suggestion(object):#涨粉
@@ -33,7 +34,7 @@ class Upfans_Suggestion(object):#涨粉
         #print int(uid)%6
         for ip in servers_ip:
             #print ip,uid
-            strcmd = '''echo -n -e "get 1-''' + uid + '''\r\n" | nc ''' + ip + " 9764"
+            strcmd = '''echo -n -e "get 1-''' + uid + '''\r\n" | nc ''' + ip + " 9764 -w 1"
             (status, output) = commands.getstatusoutput(strcmd)
             #type(status) int type(output) str /noresult: END---len(output):4
             if status == 0 and len(output) > 4:
@@ -140,6 +141,7 @@ class Upfans_Suggestion(object):#涨粉
                     del self.upfans_result[k][adid]
         print "loop begin"
         i = 0
+        lushan_count=0
         upfans_custom_rpm_dic_set = set(self.upfans_custom_rpm_dic.keys())
         for (adid, values) in self.order_data.items():
             i += 1
@@ -149,7 +151,9 @@ class Upfans_Suggestion(object):#涨粉
             if adid in self.upfans_result[adid_mod].keys():
                 continue
             uid = values['ad_uid']
+            # util.logger.info(["check lushan:", uid])
             buy_flag = self.check_upfans_lushan(uid)
+            # util.logger.info(["check lushan done:", uid])
             self.upfans_result[adid_mod][adid] = '0'
             #print "buy_flag:",adid,buy_flag
             if ( 1 == buy_flag):
@@ -165,6 +169,9 @@ class Upfans_Suggestion(object):#涨粉
                         #print adid,self.upfans_recmd_record[uid],date_7
                         self.upfans_result[adid_mod][adid] = '2'
                         self.upfans_recmd_record[upfans_mod][uid] = str(datetime.date.today())
+
+        # print "upfans_segesstion...................................all: "+str(i)
+        # util.logger.info(["upfans_segesstion...................................all: ",str(i)])
         self.data_store()
         #print self.upfans_result
         return self.upfans_result

@@ -116,16 +116,25 @@ class OnlineOrderProcess(object):
         计算所有订单的购买类型
         :return:
         """
-        with open(self.fpath_order, 'r') as fr:
-            for line in fr:
-                adid = line.strip().split()[0]
-                if adid in self.order and self.order[adid]['buy_type'] == 0:  # 如果该广告id在order中，并且购买类型没有修改过，是0，则进行购买类型计算
-                    is_buy_fanstop = self.order[adid]['is_buy_fanstop']
-                    is_buy_feifen = self.order[adid]['is_buy_feifen']
-                    is_buy_orientation = self.order[adid]['is_buy_orientation']
-                    is_buy_sel_uid = self.order[adid]['is_buy_sel_uid']
-                    buy_type = self.cal_buy_type(is_buy_fanstop, is_buy_feifen, is_buy_orientation, is_buy_sel_uid)
-                    self.order[adid]['buy_type'] = buy_type
+        # with open(self.fpath_order, 'r') as fr:
+        #     for line in fr:
+        #         adid = line.strip().split()[0]
+        #         if adid in self.order and self.order[adid]['buy_type'] == 0:  # 如果该广告id在order中，并且购买类型没有修改过，是0，则进行购买类型计算
+        #             is_buy_fanstop = self.order[adid]['is_buy_fanstop']
+        #             is_buy_feifen = self.order[adid]['is_buy_feifen']
+        #             is_buy_orientation = self.order[adid]['is_buy_orientation']
+        #             is_buy_sel_uid = self.order[adid]['is_buy_sel_uid']
+        #             buy_type = self.cal_buy_type(is_buy_fanstop, is_buy_feifen, is_buy_orientation, is_buy_sel_uid)
+        #             self.order[adid]['buy_type'] = buy_type
+        #直接从内存中获取order数据，而不再读取文件的数据
+        for adid in self.order:
+            if self.order[adid]['buy_type'] == 0:  # 如果该广告id在order中，并且购买类型没有修改过，是0，则进行购买类型计算
+                is_buy_fanstop = self.order[adid]['is_buy_fanstop']
+                is_buy_feifen = self.order[adid]['is_buy_feifen']
+                is_buy_orientation = self.order[adid]['is_buy_orientation']
+                is_buy_sel_uid = self.order[adid]['is_buy_sel_uid']
+                buy_type = self.cal_buy_type(is_buy_fanstop, is_buy_feifen, is_buy_orientation, is_buy_sel_uid)
+                self.order[adid]['buy_type'] = buy_type
 
     def cal_buy_type(self, is_buy_fanstop, is_buy_feifen, is_buy_orientation, is_buy_sel_uid):
         """

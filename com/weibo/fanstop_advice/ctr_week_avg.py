@@ -45,7 +45,7 @@ def ctr_week_avg(dir_path):
                 continue
             if way + expo_flag not in values.keys():
                 expo_num += 1
-            buy_type_ctr = values[way + '_ctr'] if way + '_ctr' in values else 0.0
+            # buy_type_ctr = values[way + '_ctr'] if way + '_ctr' in values else 0.0
 
             if way + '_ctr' in values:
                 buy_type_ctr = values[way + '_ctr']
@@ -58,7 +58,7 @@ def ctr_week_avg(dir_path):
             buy_type_expo = values[way + expo_flag] if way + expo_flag in values else 0
             tmp_static[str(values["video_flag"]) + way + '_interact'] += buy_type_ctr * buy_type_expo
             tmp_static[str(values["video_flag"]) + way + '_num'] += buy_type_expo
-            if way + '_num' in values and values[way + '_num'] != 0:
+            if (way + '_num' in values and values[way + '_num'] != 0) or values['sel_uid']: #当有指定账号时（没有_num数量）,要加到统计当中来
                 if str(values["video_flag"]) + '_' + way + '_ctr' in sta_ctr.keys():
                     if str(buy_type_ctr) in sta_ctr[str(values["video_flag"]) + '_' + way + '_ctr'].keys():
                         sta_ctr[str(values["video_flag"]) + '_' + way + '_ctr'][str(buy_type_ctr)] += 1
@@ -113,7 +113,7 @@ def ctr_week_avg(dir_path):
                 continue
             history_ctr_week[take[0]] = float(take[1])
             if float(ctr_week_out[take[0]]) / float(take[1]) > 1.25 or float(ctr_week_out[take[0]]) / float(
-                    take[1]) < 0.75:#如果ctr波动过大，波动超过25%，则不更新
+                    take[1]) < 0.75:  # 如果ctr波动过大，波动超过25%，则不更新
                 update_flag = 0
     if 1 == update_flag:
         with open(dir_path + '/data/ctr_week_avg_update.txt', 'w') as fw:

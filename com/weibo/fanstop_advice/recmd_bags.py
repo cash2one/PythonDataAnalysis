@@ -133,7 +133,8 @@ class BagProb(object):
                         bags_set.add(k)
                 candidate_bags = [i for i in bags_set]
                 #print 'candidate_bags:',adid,candidate_bags
-                tmp_result = self.ProbCaculate(self.midwords[mid], candidate_bags, self.bag_leve[bag_code])
+                if bag_code in self.bag_leve.keys():
+                    tmp_result = self.ProbCaculate(self.midwords[mid], candidate_bags, self.bag_leve[bag_code])
                 if len(tmp_result) == 0:
                     #fw2.write('\n')
                     continue

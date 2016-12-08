@@ -267,7 +267,7 @@ def main(dir_path):
     bowen_result = myBoWen.order_data_process()#博文质量检测
     util.logger.info([" bowen process finish: bowen_result num is ", len(bowen_result)])
 
-    order_data, history_order_data = CtrData(order_data, bowen_result, inter_data, history_order_data)#24小时CTR!!!
+    order_data, history_order_data = CtrData(order_data, bowen_result, inter_data, history_order_data)#72小时CTR!!!
     ce.dump(order_data, open(dir_path + '/data/order_data.pkl', 'wb'))
     util.logger.info([" ctr caculate finish: CtrData order_data num is ", len(order_data), "CtrData history_order_data num is ", len(history_order_data)])
 
