@@ -1,3 +1,5 @@
+from com.ml.lr.test.logRegression import test_log_regres, train_log_regres
+
 __author__ = 'Zealot'
 
 #################################################
